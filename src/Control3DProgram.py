@@ -43,6 +43,7 @@ class GraphicsProgram3D:
         self.look_x = 0
         self.look_y = 0
 
+        self.planet_rotation = 0
         self.speed = 2
 
         self.light_position = Point(0.0, 0.0, 5.0)
@@ -79,6 +80,7 @@ class GraphicsProgram3D:
 
         self.spectator_movement(delta_time)
 
+        self.planet_rotation += pi * delta_time 
         self.light_position_factor += delta_time * pi / 10
         self.light_position.x = -cos(self.light_position_factor) * 5.0
         self.light_position.y = 3.0 + sin(self.light_position_factor) * 5.0
@@ -117,7 +119,9 @@ class GraphicsProgram3D:
 
         # Rest of planets
         self.model_matrix.push_matrix()
-        for i in range(9):
+        print(self.planet_rotation)
+        self.model_matrix.add_rotation_y(self.planet_rotation/pi)
+        for i in range(8):
             self.model_matrix.push_matrix()
             self.model_matrix.add_translation(5*i, 0, 0)
             self.model_matrix.add_rotation_y(self.my_cube_position_factor)

@@ -35,8 +35,15 @@ class GraphicsProgram3D:
         self.clock = pygame.time.Clock()
         self.clock.tick()
 
-        self.LEFT_key_down = False
-        self.RIGHT_key_down = False
+        self.W_key_down = False
+        self.S_key_down = False
+        self.A_key_down = False
+        self.D_key_down = False
+
+        self.look_x = 0
+        self.look_y = 0
+
+        self.speed = 2
 
         self.light_position = Point(0.0, 0.0, 5.0)
         self.light_position_factor = 0.0
@@ -44,17 +51,33 @@ class GraphicsProgram3D:
         self.my_cube_position = Point(0.0, 0.0, 0.0)
         self.my_cube_position_factor = 0.0
 
+    def spectator_movement(self, delta_time):
+        # Movement
+        if self.W_key_down:
+            self.view_matrix.slide(0, 0, -self.speed * delta_time)
+        if self.S_key_down:
+            self.view_matrix.slide(0, 0, self.speed * delta_time)
+        if self.A_key_down:
+            self.view_matrix.slide(-self.speed * delta_time, 0, 0)
+        if self.D_key_down:
+            self.view_matrix.slide(self.speed * delta_time, 0, 0)
 
+        if self.look_x:
+            self.view_matrix.yaw(self.look_x * delta_time)
+        if self.look_y:
+            self.view_matrix.pitch(self.look_y * delta_time)
 
 ## UPDATE ##
 
     def update(self):
         delta_time = self.clock.tick() / 1000.0
 
-        if(self.LEFT_key_down):
-            self.view_matrix.yaw(pi * delta_time)
-        if(self.RIGHT_key_down):
-            self.view_matrix.yaw(-pi * delta_time)
+        # if(self.LEFT_key_down):
+        #     self.view_matrix.yaw(pi * delta_time)
+        # if(self.RIGHT_key_down):
+        #     self.view_matrix.yaw(-pi * delta_time)
+
+        self.spectator_movement(delta_time)
 
         self.light_position_factor += delta_time * pi / 10
         self.light_position.x = -cos(self.light_position_factor) * 5.0
@@ -62,7 +85,6 @@ class GraphicsProgram3D:
 
         self.my_cube_position_factor += delta_time * pi
         self.my_cube_position.x = cos(self.my_cube_position_factor)
-
 
 
 ## DISPLAY ##
@@ -74,51 +96,50 @@ class GraphicsProgram3D:
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
 
         glViewport(0, 0, 800, 600)
-
-        # self.shader.set_projection_matrix(self.projection_matrix.get_matrix())
-        # self.shader.set_view_matrix(self.view_matrix.get_matrix())
+        self.projection_matrix.set_perspective(
+                    pi/2,    # FOV
+                    800/600, # Aspect ratio
+                    0.1,     # Near plane
+                    50)      # Far plane
+        self.shader.set_projection_matrix(self.projection_matrix.get_matrix())
+        self.shader.set_view_matrix(self.view_matrix.get_matrix())
         
         self.shader.set_light_position(self.light_position)
 
         self.model_matrix.load_identity()
 
-    ## FIRST CUBE ##
-
+        # Sun
         self.model_matrix.push_matrix()
-        self.model_matrix.add_translation(self.my_cube_position.x, self.my_cube_position.y, self.my_cube_position.z)
+        self.model_matrix.add_scale(2, 2, 2)
         self.shader.set_model_matrix(self.model_matrix.matrix)
-
-        self.cube.draw(self.shader)
+        self.sphere.draw(self.shader)
         self.model_matrix.pop_matrix()
 
-
-    ## FLOOR - TWO PARTS ##
-
+        # Rest of planets
         self.model_matrix.push_matrix()
-        self.model_matrix.add_translation(-1.0, -1.0, 0)
-        self.model_matrix.add_scale(1.8, 0.8, 2.0)
-        self.shader.set_model_matrix(self.model_matrix.matrix)
-        self.cube.draw(self.shader)
-        self.model_matrix.pop_matrix()
-
-        self.model_matrix.push_matrix()
-        self.model_matrix.add_translation(1.0, -1.0, 0)
-        self.model_matrix.add_scale(1.8, 0.8, 2.0)
-        self.shader.set_model_matrix(self.model_matrix.matrix)
-        self.cube.draw(self.shader)
+        for i in range(9):
+            self.model_matrix.push_matrix()
+            self.model_matrix.add_translation(5*i, 0, 0)
+            self.model_matrix.add_rotation_y(self.my_cube_position_factor)
+            self.model_matrix.add_rotation_y(self.my_cube_position_factor)
+            self.shader.set_model_matrix(self.model_matrix.matrix)
+            self.sphere.draw(self.shader) 
+            self.model_matrix.pop_matrix()
         self.model_matrix.pop_matrix()
 
         pygame.display.flip()
 
-
-
 ## PROGRAM EXECUTION ##
 
     def program_loop(self):
+        pygame.mouse.set_visible(False)
+        pygame.event.set_grab(True)
+
         exiting = False
         while not exiting:
-
-            for event in pygame.event.get():
+            
+            events = pygame.event.get()
+            for event in events:
                 if event.type == pygame.QUIT:
                     print("Quitting!")
                     exiting = True
@@ -126,18 +147,33 @@ class GraphicsProgram3D:
                     if event.key == K_ESCAPE:
                         print("Escaping!")
                         exiting = True
-
-                    if event.key == K_LEFT:
-                        self.LEFT_key_down = True
-                    if event.key == K_RIGHT:
-                        self.RIGHT_key_down = True
+                    
+                    if event.key == K_w:
+                        self.W_key_down = True
+                    if event.key == K_s:
+                        self.S_key_down = True
+                    if event.key == K_a:
+                        self.A_key_down = True
+                    if event.key == K_d:
+                        self.D_key_down = True
 
                 elif event.type == pygame.KEYUP:
-                    if event.key == K_LEFT:
-                        self.LEFT_key_down = False
-                    if event.key == K_RIGHT:
-                        self.RIGHT_key_down = False
+                    if event.key == K_w:
+                        self.W_key_down = False
+                    if event.key == K_s:
+                        self.S_key_down = False
+                    if event.key == K_a:
+                        self.A_key_down = False
+                    if event.key == K_d:
+                        self.D_key_down = False
+
+                elif event.type == pygame.MOUSEMOTION:
+                    self.look_x, self.look_y = pygame.mouse.get_rel()
+                    self.look_y *= -1
             
+            if len(events) == 0:
+                self.look_x = self.look_y = 0
+
             self.update()
             self.display()
 

@@ -9,6 +9,11 @@ import time
 from Shaders import *
 from Matrices import *
 
+from Planet import Planet
+
+EARTH_SIZE = 0.5
+EARTH_SPEED = 1
+
 class GraphicsProgram3D:
     def __init__(self):
 
@@ -31,6 +36,9 @@ class GraphicsProgram3D:
 
         self.cube = Cube()
         self.sphere = Sphere(24, 48)
+        # self.planet = Planet(24, 48)
+        self.planets = [Planet(24, 48) for i in range(8)]
+        self.sun = Planet(24, 48)
 
         self.clock = pygame.time.Clock()
         self.clock.tick()
@@ -51,6 +59,32 @@ class GraphicsProgram3D:
 
         self.my_cube_position = Point(0.0, 0.0, 0.0)
         self.my_cube_position_factor = 0.0
+
+        # Configure each planet
+        # Mercury
+        self.planets[0].set_name("Mercury")
+        self.planets[0].set_size(EARTH_SIZE/3)
+        # Venus
+        self.planets[1].set_name("Venus")
+        self.planets[1].set_size(EARTH_SIZE-0.1)
+        # Earth
+        self.planets[2].set_name("Earth")
+        self.planets[2].set_size(EARTH_SIZE)
+        # Mars
+        self.planets[3].set_name("Mars")
+        self.planets[3].set_size(EARTH_SIZE/2)
+        # Jupiter
+        self.planets[4].set_name("Jupiter")
+        self.planets[4].set_size(EARTH_SIZE*11)
+        # Saturn
+        self.planets[5].set_name("Saturn")
+        self.planets[5].set_size(EARTH_SIZE*9)
+        # Uranus
+        self.planets[6].set_name("Uranus")
+        self.planets[6].set_size(EARTH_SIZE*4)
+        # Naptune
+        self.planets[7].set_name("Neptune")
+        self.planets[7].set_size(EARTH_SIZE*4-0.01)
 
     def spectator_movement(self, delta_time):
         # Movement
@@ -114,21 +148,25 @@ class GraphicsProgram3D:
         self.model_matrix.push_matrix()
         self.model_matrix.add_scale(2, 2, 2)
         self.shader.set_model_matrix(self.model_matrix.matrix)
-        self.sphere.draw(self.shader)
+        self.sun.draw(self.shader)
         self.model_matrix.pop_matrix()
 
-        # Rest of planets
+
+
+
+        # Planets
         self.model_matrix.push_matrix()
-        print(self.planet_rotation)
-        self.model_matrix.add_rotation_y(self.planet_rotation/pi)
-        for i in range(8):
-            self.model_matrix.push_matrix()
-            self.model_matrix.add_translation(5*i, 0, 0)
-            self.model_matrix.add_rotation_y(self.my_cube_position_factor)
-            self.model_matrix.add_rotation_y(self.my_cube_position_factor)
-            self.shader.set_model_matrix(self.model_matrix.matrix)
-            self.sphere.draw(self.shader) 
-            self.model_matrix.pop_matrix()
+        # self.model_matrix.add_rotation_y(self.planet_rotation/pi)
+        for idx, planet in enumerate(self.planets):
+            print(planet.name)
+            planet.display(self.model_matrix, self.shader, idx+1)
+            # self.model_matrix.push_matrix()
+            # self.model_matrix.add_translation(5*i, 0, 0)
+            # self.model_matrix.add_rotation_y(self.my_cube_position_factor)
+            # self.model_matrix.add_rotation_y(self.my_cube_position_factor)
+            # self.shader.set_model_matrix(self.model_matrix.matrix)
+            # self.planet.draw(self.shader) 
+            # self.model_matrix.pop_matrix()
         self.model_matrix.pop_matrix()
 
         pygame.display.flip()

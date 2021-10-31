@@ -174,6 +174,7 @@ class GraphicsProgram3D:
                 elif event.type == pygame.MOUSEMOTION:
                     self.look_x, self.look_y = pygame.mouse.get_rel()
                     self.look_y *= -1
+                    self.look_x *= -1
             
             if len(events) == 0:
                 self.look_x = self.look_y = 0

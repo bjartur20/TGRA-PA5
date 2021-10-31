@@ -71,32 +71,32 @@ class GraphicsProgram3D:
         self.planets[1].set_size(EARTH_SIZE-0.1)
         self.planets[1].set_year(225*scalar)
         self.planets[1].set_color(0.65, 0.49, 0.11)
-        # Earth
+        # # Earth
         self.planets[2].set_name("Earth")
         self.planets[2].set_size(EARTH_SIZE)
         self.planets[2].set_year(365*scalar)
         self.planets[2].set_color(0.49, 0.64, 0.49)
-        # Mars
+        # # Mars
         self.planets[3].set_name("Mars")
         self.planets[3].set_size(EARTH_SIZE/2)
         self.planets[3].set_year(687*scalar)
         self.planets[3].set_color(0.76, 0.27, 0.05)
-        # Jupiter
+        # # Jupiter
         self.planets[4].set_name("Jupiter")
         self.planets[4].set_size(EARTH_SIZE*11)
         self.planets[4].set_year(4329*scalar)
         self.planets[4].set_color(0.89, 0.86, 0.80)
-        # Saturn
+        # # Saturn
         self.planets[5].set_name("Saturn")
         self.planets[5].set_size(EARTH_SIZE*9)
         self.planets[5].set_year(10738*scalar)
         self.planets[5].set_color(0.89, 0.88, 0.75)
-        # Uranus
+        # # Uranus
         self.planets[6].set_name("Uranus")
         self.planets[6].set_size(EARTH_SIZE*4)
         self.planets[6].set_year(30569*scalar)
         self.planets[6].set_color(0.73, 0.88, 0.89)
-        # Naptune
+        # # Naptune
         self.planets[7].set_name("Neptune")
         self.planets[7].set_size(EARTH_SIZE*4-0.01)
         self.planets[7].set_year(59769*scalar)
@@ -123,11 +123,6 @@ class GraphicsProgram3D:
     def update(self):
         delta_time = self.clock.tick() / 1000.0
 
-        # if(self.LEFT_key_down):
-        #     self.view_matrix.yaw(pi * delta_time)
-        # if(self.RIGHT_key_down):
-        #     self.view_matrix.yaw(-pi * delta_time)
-
         self.spectator_movement(delta_time)
 
         # TODO: USE DELTA TIME FOR UPDATING PLANET POSITIONS
@@ -149,6 +144,7 @@ class GraphicsProgram3D:
 
         glClearColor(0.0, 0.0, 0.0, 1.0)
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
+        glEnable(GL_DEPTH_TEST)
 
         glViewport(0, 0, 800, 600)
         self.projection_matrix.set_perspective(

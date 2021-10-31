@@ -12,7 +12,7 @@ from Matrices import *
 from Planet import Planet
 
 EARTH_SIZE = 0.5
-EARTH_SPEED = 1
+EARTH_SPEED = 0.1
 
 class GraphicsProgram3D:
     def __init__(self):
@@ -51,8 +51,7 @@ class GraphicsProgram3D:
         self.look_x = 0
         self.look_y = 0
 
-        self.planet_rotation = 0
-        self.speed = 2
+        self.speed = 5
 
         self.light_position = Point(0.0, 0.0, 5.0)
         self.light_position_factor = 0.0
@@ -60,31 +59,48 @@ class GraphicsProgram3D:
         self.my_cube_position = Point(0.0, 0.0, 0.0)
         self.my_cube_position_factor = 0.0
 
+        scalar = 1/75
         # Configure each planet
         # Mercury
         self.planets[0].set_name("Mercury")
         self.planets[0].set_size(EARTH_SIZE/3)
+        self.planets[0].set_year(88*scalar)
+        self.planets[0].set_color(0.86, 0.81, 0.79)
         # Venus
         self.planets[1].set_name("Venus")
         self.planets[1].set_size(EARTH_SIZE-0.1)
+        self.planets[1].set_year(225*scalar)
+        self.planets[1].set_color(0.65, 0.49, 0.11)
         # Earth
         self.planets[2].set_name("Earth")
         self.planets[2].set_size(EARTH_SIZE)
+        self.planets[2].set_year(365*scalar)
+        self.planets[2].set_color(0.49, 0.64, 0.49)
         # Mars
         self.planets[3].set_name("Mars")
         self.planets[3].set_size(EARTH_SIZE/2)
+        self.planets[3].set_year(687*scalar)
+        self.planets[3].set_color(0.76, 0.27, 0.05)
         # Jupiter
         self.planets[4].set_name("Jupiter")
         self.planets[4].set_size(EARTH_SIZE*11)
+        self.planets[4].set_year(4329*scalar)
+        self.planets[4].set_color(0.89, 0.86, 0.80)
         # Saturn
         self.planets[5].set_name("Saturn")
         self.planets[5].set_size(EARTH_SIZE*9)
+        self.planets[5].set_year(10738*scalar)
+        self.planets[5].set_color(0.89, 0.88, 0.75)
         # Uranus
         self.planets[6].set_name("Uranus")
         self.planets[6].set_size(EARTH_SIZE*4)
+        self.planets[6].set_year(30569*scalar)
+        self.planets[6].set_color(0.73, 0.88, 0.89)
         # Naptune
         self.planets[7].set_name("Neptune")
         self.planets[7].set_size(EARTH_SIZE*4-0.01)
+        self.planets[7].set_year(59769*scalar)
+        self.planets[7].set_color(0.29, 0.44, 0.87)
 
     def spectator_movement(self, delta_time):
         # Movement
@@ -114,7 +130,10 @@ class GraphicsProgram3D:
 
         self.spectator_movement(delta_time)
 
-        self.planet_rotation += pi * delta_time 
+        # TODO: USE DELTA TIME FOR UPDATING PLANET POSITIONS
+        for planet in self.planets:
+            planet.update(pygame.time.get_ticks()/1000)
+
         self.light_position_factor += delta_time * pi / 10
         self.light_position.x = -cos(self.light_position_factor) * 5.0
         self.light_position.y = 3.0 + sin(self.light_position_factor) * 5.0
@@ -136,37 +155,31 @@ class GraphicsProgram3D:
                     pi/2,    # FOV
                     800/600, # Aspect ratio
                     0.1,     # Near plane
-                    50)      # Far plane
+                    100      # Far plane
+        )
         self.shader.set_projection_matrix(self.projection_matrix.get_matrix())
         self.shader.set_view_matrix(self.view_matrix.get_matrix())
         
+        self.shader.set_eye_position(self.view_matrix.eye)
+
+        # Setup global light
         self.shader.set_light_position(self.light_position)
+        self.shader.set_light_diffuse(1.0, 1.0, 1.0)
+        self.shader.set_light_specular(1.0, 1.0, 1.0)
 
         self.model_matrix.load_identity()
-
         # Sun
         self.model_matrix.push_matrix()
+        self.shader.set_material_diffuse(1.0, 0.0, 0.0)
         self.model_matrix.add_scale(2, 2, 2)
         self.shader.set_model_matrix(self.model_matrix.matrix)
         self.sun.draw(self.shader)
         self.model_matrix.pop_matrix()
 
-
-
-
         # Planets
         self.model_matrix.push_matrix()
-        # self.model_matrix.add_rotation_y(self.planet_rotation/pi)
         for idx, planet in enumerate(self.planets):
-            print(planet.name)
             planet.display(self.model_matrix, self.shader, idx+1)
-            # self.model_matrix.push_matrix()
-            # self.model_matrix.add_translation(5*i, 0, 0)
-            # self.model_matrix.add_rotation_y(self.my_cube_position_factor)
-            # self.model_matrix.add_rotation_y(self.my_cube_position_factor)
-            # self.shader.set_model_matrix(self.model_matrix.matrix)
-            # self.planet.draw(self.shader) 
-            # self.model_matrix.pop_matrix()
         self.model_matrix.pop_matrix()
 
         pygame.display.flip()

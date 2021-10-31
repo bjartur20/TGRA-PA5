@@ -41,13 +41,20 @@ class Shader3D:
         self.normalLoc			= glGetAttribLocation(self.renderingProgramID, "a_normal")
         glEnableVertexAttribArray(self.normalLoc)
 
+        self.eyePosLoc = glGetUniformLocation(self.renderingProgramID, "u_eye_position")
+
         self.modelMatrixLoc			= glGetUniformLocation(self.renderingProgramID, "u_model_matrix")
         self.viewMatrixLoc			= glGetUniformLocation(self.renderingProgramID, "u_view_matrix")
-        self.projectionMatrixLoc			= glGetUniformLocation(self.renderingProgramID, "u_projection_matrix")
+        self.projectionMatrixLoc	= glGetUniformLocation(self.renderingProgramID, "u_projection_matrix")
 
-        self.lightPosLoc               = glGetUniformLocation(self.renderingProgramID, "u_light_position")
+        self.lightPosLoc            = glGetUniformLocation(self.renderingProgramID, "u_light_position")
+        self.lightDiffuseLoc        = glGetUniformLocation(self.renderingProgramID, "u_light_diffuse")
+        self.lightSpecularLoc       = glGetUniformLocation(self.renderingProgramID, "u_light_specular")
 
 
+        self.materialDiffuseLoc     = glGetUniformLocation(self.renderingProgramID, "u_material_diffuse")
+        self.materialSpecularLoc    = glGetUniformLocation(self.renderingProgramID, "u_material_specular")
+        self.materialShininessLoc   = glGetUniformLocation(self.renderingProgramID, "u_material_shininess")
 
     def use(self):
         try:
@@ -67,8 +74,26 @@ class Shader3D:
 
     def set_light_position(self, pos):
         glUniform4f(self.lightPosLoc, pos.x, pos.y, pos.z, 1.0)
+    
+    def set_light_specular(self, r, g, b):
+        glUniform4f(self.lightSpecularLoc, r, g, b, 1.0)
+    
+    def set_light_diffuse(self, r, g, b):
+        glUniform4f(self.lightDiffuseLoc, r, g, b, 1.0)
 
     def set_attribute_buffers(self, vertex_buffer_id):
         glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_id)
         glVertexAttribPointer(self.positionLoc, 3, GL_FLOAT, False, 6 * sizeof(GLfloat), OpenGL.GLU.ctypes.c_void_p(0))
         glVertexAttribPointer(self.normalLoc, 3, GL_FLOAT, False, 6 * sizeof(GLfloat), OpenGL.GLU.ctypes.c_void_p(3 * sizeof(GLfloat)))
+
+    def set_eye_position(self, pos):
+        glUniform4f(self.eyePosLoc, pos.x, pos.y, pos.z, 1.0)
+
+    def set_material_specular(self, r, g, b):
+        glUniform4f(self.materialSpecularLoc, r, g, b, 1.0)
+
+    def set_material_diffuse(self, r, g, b):
+        glUniform4f(self.materialDiffuseLoc, r, g, b, 1.0)
+
+    def set_material_shininess(self, shininess):
+        glUniform1f(self.materialShininessLoc, shininess)

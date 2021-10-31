@@ -47,6 +47,14 @@ class GraphicsProgram3D:
         self.S_key_down = False
         self.A_key_down = False
         self.D_key_down = False
+        self.one_key_down = False
+        self.two_key_down = False
+        self.three_key_down = False
+        self.four_key_down = False
+        self.five_key_down = False
+        self.six_key_down = False
+        self.seven_key_down = False
+        self.eight_key_down = False
 
         self.look_x = 0
         self.look_y = 0
@@ -65,41 +73,49 @@ class GraphicsProgram3D:
         self.planets[0].set_name("Mercury")
         self.planets[0].set_size(EARTH_SIZE/3)
         self.planets[0].set_year(88*scalar)
+        self.planets[0].set_distance_from_sun(0.4)
         self.planets[0].set_color(0.86, 0.81, 0.79)
         # Venus
         self.planets[1].set_name("Venus")
         self.planets[1].set_size(EARTH_SIZE-0.1)
         self.planets[1].set_year(225*scalar)
+        self.planets[1].set_distance_from_sun(0.7)
         self.planets[1].set_color(0.65, 0.49, 0.11)
         # # Earth
         self.planets[2].set_name("Earth")
         self.planets[2].set_size(EARTH_SIZE)
         self.planets[2].set_year(365*scalar)
+        self.planets[2].set_distance_from_sun(1)
         self.planets[2].set_color(0.49, 0.64, 0.49)
         # # Mars
         self.planets[3].set_name("Mars")
         self.planets[3].set_size(EARTH_SIZE/2)
         self.planets[3].set_year(687*scalar)
+        self.planets[3].set_distance_from_sun(1.5)
         self.planets[3].set_color(0.76, 0.27, 0.05)
         # # Jupiter
         self.planets[4].set_name("Jupiter")
         self.planets[4].set_size(EARTH_SIZE*11)
         self.planets[4].set_year(4329*scalar)
+        self.planets[4].set_distance_from_sun(5.2)
         self.planets[4].set_color(0.89, 0.86, 0.80)
         # # Saturn
         self.planets[5].set_name("Saturn")
         self.planets[5].set_size(EARTH_SIZE*9)
         self.planets[5].set_year(10738*scalar)
+        self.planets[5].set_distance_from_sun(9.5)
         self.planets[5].set_color(0.89, 0.88, 0.75)
         # # Uranus
         self.planets[6].set_name("Uranus")
         self.planets[6].set_size(EARTH_SIZE*4)
         self.planets[6].set_year(30569*scalar)
+        self.planets[6].set_distance_from_sun(19.8)
         self.planets[6].set_color(0.73, 0.88, 0.89)
         # # Naptune
         self.planets[7].set_name("Neptune")
         self.planets[7].set_size(EARTH_SIZE*4-0.01)
         self.planets[7].set_year(59769*scalar)
+        self.planets[7].set_distance_from_sun(30.1)
         self.planets[7].set_color(0.29, 0.44, 0.87)
 
     def spectator_movement(self, delta_time):
@@ -124,6 +140,15 @@ class GraphicsProgram3D:
         delta_time = self.clock.tick() / 1000.0
 
         self.spectator_movement(delta_time)
+
+        # Individual planet view
+        if self.one_key_down:
+            planet_coords = self.planets[1].get_global_coords()
+            self.view_matrix.look(
+                
+                planet_coords,
+                Vector(0.0, 1.0, 0.0)
+            )
 
         # TODO: USE DELTA TIME FOR UPDATING PLANET POSITIONS
         for planet in self.planets:
@@ -166,7 +191,7 @@ class GraphicsProgram3D:
         self.model_matrix.load_identity()
         # Sun
         self.model_matrix.push_matrix()
-        self.shader.set_material_diffuse(1.0, 0.0, 0.0)
+        self.shader.set_material_diffuse(1.0, 1.0, 0.0)
         self.model_matrix.add_scale(2, 2, 2)
         self.shader.set_model_matrix(self.model_matrix.matrix)
         self.sun.draw(self.shader)
@@ -174,8 +199,8 @@ class GraphicsProgram3D:
 
         # Planets
         self.model_matrix.push_matrix()
-        for idx, planet in enumerate(self.planets):
-            planet.display(self.model_matrix, self.shader, idx+1)
+        for planet in self.planets:
+            planet.display(self.model_matrix, self.shader)
         self.model_matrix.pop_matrix()
 
         pygame.display.flip()
@@ -207,6 +232,22 @@ class GraphicsProgram3D:
                         self.A_key_down = True
                     if event.key == K_d:
                         self.D_key_down = True
+                    if event.key == K_1:
+                        self.one_key_down = True
+                    if event.key == K_2:
+                        self.two_key_down = True
+                    if event.key == K_3:
+                        self.three_key_down = True
+                    if event.key == K_4:
+                        self.four_key_down = True
+                    if event.key == K_5:
+                        self.five_key_down = True
+                    if event.key == K_6:
+                        self.six_key_down = True
+                    if event.key == K_7:
+                        self.seven_key_down = True
+                    if event.key == K_8:
+                        self.eight_key_down = True
 
                 elif event.type == pygame.KEYUP:
                     if event.key == K_w:
@@ -217,6 +258,22 @@ class GraphicsProgram3D:
                         self.A_key_down = False
                     if event.key == K_d:
                         self.D_key_down = False
+                    if event.key == K_1:
+                        self.one_key_down = False
+                    if event.key == K_2:
+                        self.two_key_down = False
+                    if event.key == K_3:
+                        self.three_key_down = False
+                    if event.key == K_4:
+                        self.four_key_down = False
+                    if event.key == K_5:
+                        self.five_key_down = False
+                    if event.key == K_6:
+                        self.six_key_down = False
+                    if event.key == K_7:
+                        self.seven_key_down = False
+                    if event.key == K_8:
+                        self.eight_key_down = False
 
                 elif event.type == pygame.MOUSEMOTION:
                     self.look_x, self.look_y = pygame.mouse.get_rel()

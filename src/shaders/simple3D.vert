@@ -7,10 +7,12 @@ uniform mat4 u_model_matrix;
 uniform mat4 u_view_matrix;
 uniform mat4 u_projection_matrix;
 
+uniform vec4 u_eye_position;
 uniform vec4 u_light_position;
 
 varying vec4 v_normal;
 varying vec4 v_s;
+varying vec4 v_h;
 varying vec2 v_uv;
 
 void main(void)
@@ -26,6 +28,9 @@ void main(void)
 	// global coordinates
 
 	v_s = normalize(u_light_position - position);
+
+	vec4 v = normalize(u_eye_position - position);
+	v_h = normalize(v_s + v);
 
 
 	position = u_view_matrix * position;

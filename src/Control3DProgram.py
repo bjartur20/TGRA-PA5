@@ -61,7 +61,8 @@ class GraphicsProgram3D:
 
         self.speed = 5
 
-        self.light_position = Point(0.0, 0.0, 5.0)
+        # self.light_position = Point(0.0, 0.0, 5.0)
+        self.light_position = Point(0.0, 5.0, 0.0)
         self.light_position_factor = 0.0
 
         self.my_cube_position = Point(0.0, 0.0, 0.0)
@@ -154,9 +155,9 @@ class GraphicsProgram3D:
         for planet in self.planets:
             planet.update(pygame.time.get_ticks()/1000)
 
-        self.light_position_factor += delta_time * pi / 10
-        self.light_position.x = -cos(self.light_position_factor) * 5.0
-        self.light_position.y = 3.0 + sin(self.light_position_factor) * 5.0
+        # self.light_position_factor += delta_time * pi / 10
+        # self.light_position.x = -cos(self.light_position_factor) * 5.0
+        # self.light_position.y = 3.0 + sin(self.light_position_factor) * 5.0
 
         self.my_cube_position_factor += delta_time * pi
         self.my_cube_position.x = cos(self.my_cube_position_factor)
@@ -183,12 +184,13 @@ class GraphicsProgram3D:
         
         self.shader.set_eye_position(self.view_matrix.eye)
 
-        # Setup global light
+        # Setup light
         self.shader.set_light_position(self.light_position)
         self.shader.set_light_diffuse(1.0, 1.0, 1.0)
         self.shader.set_light_specular(1.0, 1.0, 1.0)
 
         self.model_matrix.load_identity()
+        
         # Sun
         self.model_matrix.push_matrix()
         self.shader.set_material_diffuse(1.0, 1.0, 0.0)

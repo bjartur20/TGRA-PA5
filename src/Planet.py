@@ -11,11 +11,13 @@ class Planet(Sphere):
         self.year_len = 1
         self.distance_from_sun = 1
         self.name = ""
+        self.day = 0
         self.position = 0
         self.color = (1.0, 1.0, 1.0)
 
     def update(self, t: int):
         self.position = (t / self.year_len)
+        self.day = self.position#  * self.year_len
 
     def set_distance_from_sun(self, dist: float):
         self.distance_from_sun = dist
@@ -43,6 +45,7 @@ class Planet(Sphere):
         model_matrix.add_rotation_y(self.position * 2 * pi)
         shader.set_material_diffuse(*self.color)
         model_matrix.add_translation(self.distance_from_sun*10, 0, 0)
+        model_matrix.add_rotation_x(self.day * 2 * pi)
         model_matrix.add_scale(self.size, self.size, self.size)
         shader.set_model_matrix(model_matrix.matrix)
         self.draw(shader) 

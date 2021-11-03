@@ -123,6 +123,9 @@ class GraphicsProgram3D:
         self.planets[7].set_distance_from_sun(30.1)
         self.planets[7].set_color(0.29, 0.44, 0.87)
 
+        white = Color(1.0, 1.0, 1.0)
+        self.light = Light(self.light_position, white, white, white)
+
         self.skybox_tex = self.load_texture(sys.path[0] + "/textures/stars.jpg")
         self.white_tex = self.load_texture(sys.path[0] + "/textures/white.png")
 
@@ -205,9 +208,7 @@ class GraphicsProgram3D:
         self.shader.set_eye_position(self.view_matrix.eye)
 
         # Setup light
-        self.shader.set_light_position(self.light_position)
-        self.shader.set_light_diffuse(1.0, 1.0, 1.0)
-        self.shader.set_light_specular(1.0, 1.0, 1.0)
+        self.shader.set_light(self.light)
 
         self.model_matrix.load_identity()
 

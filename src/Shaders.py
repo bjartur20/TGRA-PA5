@@ -81,14 +81,11 @@ class Shader3D:
     def set_projection_matrix(self, matrix_array):
         glUniformMatrix4fv(self.projectionMatrixLoc, 1, True, matrix_array)
 
-    def set_light_position(self, pos):
-        glUniform4f(self.lightPosLoc, pos.x, pos.y, pos.z, 1.0)
-
-    def set_light_specular(self, r, g, b):
-        glUniform4f(self.lightSpecularLoc, r, g, b, 1.0)
-
-    def set_light_diffuse(self, r, g, b):
-        glUniform4f(self.lightDiffuseLoc, r, g, b, 1.0)
+    def set_light(self, light: Light):
+        glUniform4f(self.lightPosLoc, *light.position.values())
+        glUniform4f(self.lightAmbientLoc, *light.ambient.values())
+        glUniform4f(self.lightDiffuseLoc, *light.diffuse.values())
+        glUniform4f(self.lightSpecularLoc, *light.specular.values())
 
     def set_position_attribute(self, vertex_array):
         glVertexAttribPointer(self.positionLoc, 3, GL_FLOAT, False, 0, vertex_array)

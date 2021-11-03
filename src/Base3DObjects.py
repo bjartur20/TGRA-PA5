@@ -21,6 +21,9 @@ class Point:
     def __sub__(self, other):
         return Vector(self.x - other.x, self.y - other.y, self.z - other.z)
 
+    def values(self):
+        return self.x, self.y, self.z, 1.0
+
 
 class Vector:
     def __init__(self, x, y, z):
@@ -71,6 +74,14 @@ class Material:
         self.shininess = 1 if shininess is None else shininess
         self.ambient = Color(0.0, 0.0, 0.0) if ambient is None else ambient
         self.emission = Color(0.0, 0.0, 0.0) if emission is None else emission
+
+
+class Light:
+    def __init__(self, position=None, ambient=None, diffuse=None, specular=None):
+        self.position = Point(0.0, 0.0, 0.0) if position is None else position
+        self.ambient = Color(0.0, 0.0, 0.0) if ambient is None else ambient
+        self.diffuse = Color(0.0, 0.0, 0.0) if diffuse is None else diffuse
+        self.specular = Color(0.0, 0.0, 0.0) if specular is None else specular
 
 
 class Cube:

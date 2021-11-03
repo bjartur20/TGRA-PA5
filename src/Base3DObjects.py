@@ -155,8 +155,7 @@ class Cube:
         glDrawArrays(GL_TRIANGLE_FAN, 12, 4)
         glDrawArrays(GL_TRIANGLE_FAN, 16, 4)
         glDrawArrays(GL_TRIANGLE_FAN, 20, 4)
-        # glBindVertexArray(0)
-        # glBindBuffer(GL_ARRAY_BUFFER, 0)
+
 
 class MeshModel:
     def __init__(self):
@@ -167,7 +166,7 @@ class MeshModel:
         self.vertex_counts = dict()
         self.vertex_buffer_ids = dict()
 
-    def add_vertex(self, mesh_id, position, normal, uv = None):
+    def add_vertex(self, mesh_id, position, normal, uv=None):
         if mesh_id not in self.vertex_arrays:
             self.vertex_arrays[mesh_id] = []
             self.vertex_counts[mesh_id] = 0
@@ -186,7 +185,6 @@ class MeshModel:
             glBindBuffer(GL_ARRAY_BUFFER, self.vertex_buffer_ids[mesh_id])
             glBufferData(GL_ARRAY_BUFFER, numpy.array(self.vertex_arrays[mesh_id], dtype='float32'), GL_STATIC_DRAW)
             glBindBuffer(GL_ARRAY_BUFFER, 0)
-
 
     def draw(self, shader):
         for mesh_id, mesh_material in self.mesh_materials.items():

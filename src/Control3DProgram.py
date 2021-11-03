@@ -16,6 +16,7 @@ from ObjLoader import ObjLoader
 EARTH_SIZE = 0.5
 EARTH_SPEED = 0.1
 
+
 class GraphicsProgram3D:
     def __init__(self):
 
@@ -193,9 +194,9 @@ class GraphicsProgram3D:
 
         glViewport(0, 0, 800, 600)
         self.projection_matrix.set_perspective(
-                    pi/2,    # FOV
-                    800/600, # Aspect ratio
-                    0.1,     # Near plane
+                    pi/2,     # FOV
+                    800/600,  # Aspect ratio
+                    0.1,      # Near plane
                     1000      # Far plane
         )
         self.shader.set_projection_matrix(self.projection_matrix.get_matrix())
@@ -211,10 +212,10 @@ class GraphicsProgram3D:
         self.model_matrix.load_identity()
 
         # Space ship
-        self.model_matrix.push_matrix()
-        self.shader.set_model_matrix(self.model_matrix.matrix)
-        self.ship.draw(self.shader)
-        self.model_matrix.pop_matrix()
+        # self.model_matrix.push_matrix()
+        # self.shader.set_model_matrix(self.model_matrix.matrix)
+        # self.ship.draw(self.shader)
+        # self.model_matrix.pop_matrix()
 
         # Sun
         glActiveTexture(GL_TEXTURE0)
@@ -226,7 +227,7 @@ class GraphicsProgram3D:
         self.shader.set_material_diffuse(Color(1.0, 1.0, 0.0))
         self.model_matrix.add_scale(2, 2, 2)
         self.shader.set_model_matrix(self.model_matrix.matrix)
-        self.sun.draw(self.shader)
+        self.sun.draw()
         self.model_matrix.pop_matrix()
 
         # Planets
@@ -236,10 +237,13 @@ class GraphicsProgram3D:
         self.model_matrix.pop_matrix()
 
         # Skybox/stars TODO: Add texture
+        glActiveTexture(GL_TEXTURE0)
+        glBindTexture(GL_TEXTURE_2D, self.white_tex)
+        self.shader.set_base_texture(0)
         self.model_matrix.push_matrix()
         self.model_matrix.add_scale(1000, 1000, 1000)
         self.shader.set_model_matrix(self.model_matrix.matrix)
-        self.space.draw(self.shader)
+        self.space.draw()
         self.model_matrix.pop_matrix()
 
         pygame.display.flip()

@@ -4,6 +4,7 @@ from Base3DObjects import Sphere, Color, Point
 from Shaders import Shader3D
 from Matrices import ModelMatrix
 
+
 class Planet(Sphere):
     def __init__(self, stack: int = 12, slices: int = 24):
         super().__init__(stack, slices)
@@ -17,7 +18,7 @@ class Planet(Sphere):
 
     def update(self, t: int):
         self.position = (t / self.year_len)
-        self.day = self.position#  * self.year_len
+        self.day = self.position  # * self.year_len
 
     def set_distance_from_sun(self, dist: float):
         self.distance_from_sun = dist * 10
@@ -41,8 +42,8 @@ class Planet(Sphere):
             -self.distance_from_sun * sin(self.position * 2 * pi)
         )
 
-    def draw(self, shader: Shader3D):
-        super().draw(shader)
+    def draw(self):
+        super().draw()
 
     def display(self, model_matrix: ModelMatrix, shader: Shader3D):
         model_matrix.push_matrix()
@@ -52,5 +53,5 @@ class Planet(Sphere):
         model_matrix.add_rotation_x(self.day * 2 * pi)
         model_matrix.add_scale(self.size, self.size, self.size)
         shader.set_model_matrix(model_matrix.matrix)
-        self.draw(shader) 
+        self.draw()
         model_matrix.pop_matrix()

@@ -17,6 +17,7 @@ from ObjLoader import ObjLoader
 EARTH_SIZE = 0.5
 EARTH_SPEED = 0.1
 
+
 class GraphicsProgram3D:
     def __init__(self):
 
@@ -129,6 +130,22 @@ class GraphicsProgram3D:
         self.planets[7].set_distance_from_sun(30.1)
         self.planets[7].set_color(0.29, 0.44, 0.87)
 
+        self.skybox_tex = self.load_texture(sys.path[0] + "/textures/stars.jpg")
+        self.white_tex = self.load_texture(sys.path[0] + "/textures/white.png")
+
+    @staticmethod
+    def load_texture(path: str):
+        surface = pygame.image.load(path)
+        tex_string = pygame.image.tostring(surface, "RGBA", True)
+        width = surface.get_width()
+        height = surface.get_height()
+        tex_id = glGenTextures(1)
+        glBindTexture(GL_TEXTURE_2D, tex_id)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, tex_string)
+        return tex_id
+
     def spectator_movement(self, delta_time):
         # Movement
         if self.W_key_down:
@@ -162,8 +179,6 @@ class GraphicsProgram3D:
     def update(self):
         delta_time = self.clock.tick() / 1000.0
         curr_time = pygame.time.get_ticks()/1000
-        print(self.planets[2].position % 1)
-        # self.spectator_movement(delta_time)
 
         # Individual planet/space ship view
         if any(self.views):
@@ -207,15 +222,22 @@ class GraphicsProgram3D:
         glEnable(GL_DEPTH_TEST)
 
         glClearColor(0.0, 0.0, 0.0, 1.0)
-        glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glEnable(GL_DEPTH_TEST)
 
         glViewport(0, 0, 800, 600)
         self.projection_matrix.set_perspective(
+<<<<<<< HEAD
                     pi/2,    # FOV
                     800/600, # Aspect ratio
                     0.1,     # Near plane
                     1000     # Far plane
+=======
+                    pi/2,     # FOV
+                    800/600,  # Aspect ratio
+                    0.1,      # Near plane
+                    1000      # Far plane
+>>>>>>> d7eded7c0d28be496ec6aba20972e6995f27064d
         )
         self.shader.set_projection_matrix(self.projection_matrix.get_matrix())
         self.shader.set_view_matrix(self.view_matrix.get_matrix())
@@ -230,6 +252,7 @@ class GraphicsProgram3D:
         self.model_matrix.load_identity()
 
         # Space ship
+<<<<<<< HEAD
         self.model_matrix.push_matrix()
         self.model_matrix.add_translation(self.ship_pos.x, self.ship_pos.y, self.ship_pos.z)
         self.model_matrix.add_scale(0.01, 0.01, 0.01)
@@ -237,12 +260,24 @@ class GraphicsProgram3D:
         self.ship.draw(self.shader)
         self.model_matrix.pop_matrix()
         
+=======
+        # self.model_matrix.push_matrix()
+        # self.shader.set_model_matrix(self.model_matrix.matrix)
+        # self.ship.draw(self.shader)
+        # self.model_matrix.pop_matrix()
+
+>>>>>>> d7eded7c0d28be496ec6aba20972e6995f27064d
         # Sun
+        glActiveTexture(GL_TEXTURE0)
+        glBindTexture(GL_TEXTURE_2D, self.white_tex)
+        self.shader.set_base_texture(0)
+
+        self.sphere.set_vertices(self.shader)
         self.model_matrix.push_matrix()
         self.shader.set_material_diffuse(Color(1.0, 1.0, 0.0))
         self.model_matrix.add_scale(2, 2, 2)
         self.shader.set_model_matrix(self.model_matrix.matrix)
-        self.sun.draw(self.shader)
+        self.sun.draw()
         self.model_matrix.pop_matrix()
 
         # Planets
@@ -252,10 +287,15 @@ class GraphicsProgram3D:
         self.model_matrix.pop_matrix()
 
         # Skybox/stars TODO: Add texture
+        glActiveTexture(GL_TEXTURE0)
+        glBindTexture(GL_TEXTURE_2D, self.skybox_tex)
+        self.shader.set_base_texture(0)
+
+        self.space.set_vertices(self.shader)
         self.model_matrix.push_matrix()
         self.model_matrix.add_scale(1000, 1000, 1000)
         self.shader.set_model_matrix(self.model_matrix.matrix)
-        self.space.draw(self.shader)
+        self.space.draw()
         self.model_matrix.pop_matrix()
 
         pygame.display.flip()
@@ -335,11 +375,12 @@ class GraphicsProgram3D:
             self.update()
             self.display()
 
-        #OUT OF GAME LOOP
+        # OUT OF GAME LOOP
         pygame.quit()
 
     def start(self):
         self.program_loop()
+
 
 if __name__ == "__main__":
     GraphicsProgram3D().start()

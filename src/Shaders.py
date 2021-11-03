@@ -52,11 +52,15 @@ class Shader3D:
         self.projectionMatrixLoc	= glGetUniformLocation(self.renderingProgramID, "u_projection_matrix")
 
         self.lightPosLoc            = glGetUniformLocation(self.renderingProgramID, "u_light_position")
+        self.lightAmbientLoc        = glGetUniformLocation(self.renderingProgramID, "u_light_ambient")
         self.lightDiffuseLoc        = glGetUniformLocation(self.renderingProgramID, "u_light_diffuse")
         self.lightSpecularLoc       = glGetUniformLocation(self.renderingProgramID, "u_light_specular")
+        self.globalAmbientLoc       = glGetUniformLocation(self.renderingProgramID, "u_global_ambient")
 
+        self.materialAmbientLoc     = glGetUniformLocation(self.renderingProgramID, "u_material_ambient")
         self.materialDiffuseLoc     = glGetUniformLocation(self.renderingProgramID, "u_material_diffuse")
         self.materialSpecularLoc    = glGetUniformLocation(self.renderingProgramID, "u_material_specular")
+        self.materialEmissionLoc    = glGetUniformLocation(self.renderingProgramID, "u_material_emission")
         self.materialShininessLoc   = glGetUniformLocation(self.renderingProgramID, "u_material_shininess")
 
         self.textureBaseLoc = glGetUniformLocation(self.renderingProgramID, "u_tex_base")

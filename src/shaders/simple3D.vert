@@ -12,8 +12,8 @@ varying vec4 v_s;
 
 void main(void)
 {
-	vec4 position = vec4(a_position.x, a_position.y, a_position.z, 1.0);
-	vec4 normal = vec4(a_normal.x, a_normal.y, a_normal.z, 0.0);
+	vec4 position = vec4(a_position, 1.0);
+	vec4 normal = vec4(a_normal, 0.0);
 	// local coordinates
 
 	position = u_model_matrix * position;

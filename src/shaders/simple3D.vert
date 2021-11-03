@@ -14,6 +14,7 @@ varying vec4 v_normal;
 varying vec4 v_s;
 varying vec4 v_h;
 varying vec2 v_uv;
+varying float v_light_dist;
 
 void main(void)
 {
@@ -26,6 +27,7 @@ void main(void)
 	position = u_model_matrix * position;
 	v_normal = normalize(u_model_matrix * normal);
 	// global coordinates
+	v_light_dist = length(u_light_position - position);
 
 	v_s = normalize(u_light_position - position);
 

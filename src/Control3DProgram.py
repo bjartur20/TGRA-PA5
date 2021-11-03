@@ -122,8 +122,8 @@ class GraphicsProgram3D:
         self.planets[7].set_distance_from_sun(30.1)
         self.planets[7].set_color(0.29, 0.44, 0.87)
 
-        self.light = Light(self.light_position, Color(1.0, 1.0, 1.0), Color(1.0, 1.0, 1.0),
-                           Color(1.0, 1.0, 1.0), Vector(1.0, 0.022, 0.0019))
+        self.light = Light(self.light_position, Color(0.8, 0.8, 0.8), Color(0.8, 0.8, 0.8),
+                           Color(0.8, 0.8, 0.8))#, Vector(1.0, 0.022, 0.0019))
         self.sun_material = Material(emission=Color(0.8, 0.7, 0.0))
         self.skybox_material = Material(emission=Color(0.2, 0.2, 0.2))
 

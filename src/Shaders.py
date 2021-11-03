@@ -89,7 +89,7 @@ class Shader3D:
         glUniform4f(self.lightSpecularLoc, *light.specular.values())
 
         c, l, q = light.attenuation.x, light.attenuation.y, light.attenuation.z
-        glUniform3f(self.lightAttenuationLoc, c, l, q)
+        glUniform4f(self.lightAttenuationLoc, c, l, q, 0.0)
 
     def set_position_attribute(self, vertex_array):
         glVertexAttribPointer(self.positionLoc, 3, GL_FLOAT, False, 0, vertex_array)

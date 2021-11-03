@@ -10,6 +10,7 @@ from Shaders import *
 from Matrices import *
 
 from Planet import Planet
+from Space import Space
 
 EARTH_SIZE = 0.5
 EARTH_SPEED = 0.1
@@ -36,9 +37,9 @@ class GraphicsProgram3D:
 
         self.cube = Cube()
         self.sphere = Sphere(24, 48)
-        # self.planet = Planet(24, 48)
         self.planets = [Planet(24, 48) for i in range(8)]
         self.sun = Planet(24, 48)
+        self.space = Space()
 
         self.clock = pygame.time.Clock()
         self.clock.tick()
@@ -62,7 +63,7 @@ class GraphicsProgram3D:
         self.speed = 5
 
         # self.light_position = Point(0.0, 0.0, 5.0)
-        self.light_position = Point(0.0, 5.0, 0.0)
+        self.light_position = Point(0.0, 0.0, 20.0)
         self.light_position_factor = 0.0
 
         self.my_cube_position = Point(0.0, 0.0, 0.0)
@@ -155,9 +156,9 @@ class GraphicsProgram3D:
         for planet in self.planets:
             planet.update(pygame.time.get_ticks()/1000)
 
-        # self.light_position_factor += delta_time * pi / 10
-        # self.light_position.x = -cos(self.light_position_factor) * 5.0
-        # self.light_position.y = 3.0 + sin(self.light_position_factor) * 5.0
+        self.light_position_factor += delta_time * pi / 10
+        self.light_position.x = -cos(self.light_position_factor) * 5.0
+        self.light_position.y = 3.0 + sin(self.light_position_factor) * 5.0
 
         self.my_cube_position_factor += delta_time * pi
         self.my_cube_position.x = cos(self.my_cube_position_factor)
@@ -177,7 +178,7 @@ class GraphicsProgram3D:
                     pi/2,    # FOV
                     800/600, # Aspect ratio
                     0.1,     # Near plane
-                    100      # Far plane
+                    1000      # Far plane
         )
         self.shader.set_projection_matrix(self.projection_matrix.get_matrix())
         self.shader.set_view_matrix(self.view_matrix.get_matrix())
@@ -203,6 +204,13 @@ class GraphicsProgram3D:
         self.model_matrix.push_matrix()
         for planet in self.planets:
             planet.display(self.model_matrix, self.shader)
+        self.model_matrix.pop_matrix()
+
+        # Skybox/stars TODO: Add texture
+        self.model_matrix.push_matrix()
+        self.model_matrix.add_scale(1000, 1000, 1000)
+        self.shader.set_model_matrix(self.model_matrix.matrix)
+        self.space.draw(self.shader)
         self.model_matrix.pop_matrix()
 
         pygame.display.flip()

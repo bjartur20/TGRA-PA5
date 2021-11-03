@@ -21,6 +21,9 @@ class Point:
     def __sub__(self, other):
         return Vector(self.x - other.x, self.y - other.y, self.z - other.z)
 
+    def __rmul__(self, other):
+        return Point(self.x * other, self.y * other, self.y * other)
+
 class Vector:
     def __init__(self, x, y, z):
         self.x = x

@@ -1,4 +1,5 @@
 from math import *
+from random import uniform
 
 import pygame
 from pygame.locals import *
@@ -42,6 +43,19 @@ class GraphicsProgram3D:
         self.sun = Planet(24, 48)
         self.space = Space()
         self.ship = ObjLoader.load_obj_file(sys.path[0] + "/Models/SpaceShip", "tie_fighter.obj") # Model("Models/SpaceShip/Models_E0601A062/tie_fighter.obj")
+
+        # Bezier curve for the ship
+        self.ship_pos = Point(10.0, 0.0, 00.0)
+        self.ship_start_moving = 5
+        self.ship_end_moving = 120
+        # Insert starting point and end point
+        self.bezier_points = [
+            Point(10.0, 0.0, 0.0),
+            Point(10.0, 0.0, 0.0)
+        ]
+        # Insert a bunch of random points between the two
+        for i in range(100):
+            self.bezier_points.insert(3, Point(uniform(-200, 200), uniform(-200, 200), uniform(-200, 200)))
 
         self.clock = pygame.time.Clock()
         self.clock.tick()
@@ -138,12 +152,31 @@ class GraphicsProgram3D:
         if self.look_y:
             self.view_matrix.pitch(self.look_y * delta_time)
 
+    def bezier_curve(self, points: list, curr_time: float):
+        t = (curr_time - self.ship_start_moving)/(self.ship_end_moving - self.ship_start_moving)
+
+        new_points = points
+        while len(new_points) > 1:
+            new_new_points = []
+            for i1 in range(0, len(new_points) - 1):
+                new_new_points += [(1 - t) * new_points[i1] + t * new_points[i1 + 1]]
+            new_points = new_new_points
+
+        return new_points[0]
+
 ## UPDATE ##
 
     def update(self):
         delta_time = self.clock.tick() / 1000.0
+        curr_time = pygame.time.get_ticks()/1000
 
-        self.spectator_movement(delta_time)
+        self.view_matrix.look(
+            Point(self.ship_pos.x+2, self.ship_pos.y, self.ship_pos.z),
+            self.ship_pos,
+            Vector(0, 1, 0)
+        )
+
+        # self.spectator_movement(delta_time)
 
         # Individual planet view
         if self.one_key_down:
@@ -156,7 +189,7 @@ class GraphicsProgram3D:
 
         # TODO: USE DELTA TIME FOR UPDATING PLANET POSITIONS
         for planet in self.planets:
-            planet.update(pygame.time.get_ticks()/1000)
+            planet.update(curr_time)
 
         self.light_position_factor += delta_time * pi / 10
         self.light_position.x = -cos(self.light_position_factor) * 5.0
@@ -165,6 +198,12 @@ class GraphicsProgram3D:
         self.my_cube_position_factor += delta_time * pi
         self.my_cube_position.x = cos(self.my_cube_position_factor)
 
+        # Bezier curve ship movement
+        self.ship_pos = self.bezier_curve(self.bezier_points, curr_time)
+        # self.bezier_points.pop(0)
+        # self.bezier_points.append(Point(uniform(10.0, 100.0), uniform(10.0, 100.0), uniform(10.0, 100.0)))
+        # t = (curr_time - self.ship_start_moving)/(self.ship_end_moving - self.ship_start_moving)
+        # self.ship_pos = pow((1-t), 3) * self.bezier_points[0] + 3 * pow((1 - t), 2) * t * self.bezier_points[1] + 3 * (1 - t) * pow(t, 2) * self.bezier_points[2] + pow(t, 3) * self.bezier_points[3]
 
 ## DISPLAY ##
 
@@ -180,7 +219,7 @@ class GraphicsProgram3D:
                     pi/2,    # FOV
                     800/600, # Aspect ratio
                     0.1,     # Near plane
-                    1000      # Far plane
+                    1000     # Far plane
         )
         self.shader.set_projection_matrix(self.projection_matrix.get_matrix())
         self.shader.set_view_matrix(self.view_matrix.get_matrix())
@@ -196,6 +235,8 @@ class GraphicsProgram3D:
 
         # Space ship
         self.model_matrix.push_matrix()
+        self.model_matrix.add_translation(self.ship_pos.x, self.ship_pos.y, self.ship_pos.z)
+        self.model_matrix.add_scale(0.01, 0.01, 0.01)
         self.shader.set_model_matrix(self.model_matrix.matrix)
         self.ship.draw(self.shader)
         self.model_matrix.pop_matrix()

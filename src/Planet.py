@@ -1,6 +1,6 @@
 from math import pi
 
-from Base3DObjects import Sphere
+from Base3DObjects import Sphere, Color
 from Shaders import Shader3D
 from Matrices import ModelMatrix
 
@@ -13,7 +13,7 @@ class Planet(Sphere):
         self.name = ""
         self.day = 0
         self.position = 0
-        self.color = (1.0, 1.0, 1.0)
+        self.color = Color(1.0, 1.0, 1.0)
 
     def update(self, t: int):
         self.position = (t / self.year_len)
@@ -32,7 +32,7 @@ class Planet(Sphere):
         self.name = name
     
     def set_color(self, r, g, b):
-        self.color = (r, g, b)
+        self.color = Color(r, g, b)
 
     def get_global_coords(self):
         pass
@@ -43,7 +43,7 @@ class Planet(Sphere):
     def display(self, model_matrix: ModelMatrix, shader: Shader3D):
         model_matrix.push_matrix()
         model_matrix.add_rotation_y(self.position * 2 * pi)
-        shader.set_material_diffuse(*self.color)
+        shader.set_material_diffuse(self.color)
         model_matrix.add_translation(self.distance_from_sun*10, 0, 0)
         model_matrix.add_rotation_x(self.day * 2 * pi)
         model_matrix.add_scale(self.size, self.size, self.size)

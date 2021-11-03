@@ -89,11 +89,11 @@ class Shader3D:
     def set_eye_position(self, pos):
         glUniform4f(self.eyePosLoc, pos.x, pos.y, pos.z, 1.0)
 
-    def set_material_specular(self, r, g, b):
-        glUniform4f(self.materialSpecularLoc, r, g, b, 1.0)
+    def set_material_specular(self, color: Color):
+        glUniform4f(self.materialSpecularLoc, color.r, color.g, color.b, 1.0)
 
-    def set_material_diffuse(self, r, g, b):
-        glUniform4f(self.materialDiffuseLoc, r, g, b, 1.0)
+    def set_material_diffuse(self, color: Color):
+        glUniform4f(self.materialDiffuseLoc, color.r, color.g, color.b, 1.0)
 
     def set_material_shininess(self, shininess):
         glUniform1f(self.materialShininessLoc, shininess)

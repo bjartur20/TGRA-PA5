@@ -11,6 +11,7 @@ from Matrices import *
 
 from Planet import Planet
 from Space import Space
+from ObjLoader import ObjLoader
 
 EARTH_SIZE = 0.5
 EARTH_SPEED = 0.1
@@ -40,6 +41,7 @@ class GraphicsProgram3D:
         self.planets = [Planet(24, 48) for i in range(8)]
         self.sun = Planet(24, 48)
         self.space = Space()
+        self.ship = ObjLoader.load_obj_file(sys.path[0] + "/Models/SpaceShip", "tie_fighter.obj") # Model("Models/SpaceShip/Models_E0601A062/tie_fighter.obj")
 
         self.clock = pygame.time.Clock()
         self.clock.tick()
@@ -191,10 +193,16 @@ class GraphicsProgram3D:
         self.shader.set_light_specular(1.0, 1.0, 1.0)
 
         self.model_matrix.load_identity()
+
+        # Space ship
+        self.model_matrix.push_matrix()
+        self.shader.set_model_matrix(self.model_matrix.matrix)
+        self.ship.draw(self.shader)
+        self.model_matrix.pop_matrix()
         
         # Sun
         self.model_matrix.push_matrix()
-        self.shader.set_material_diffuse(1.0, 1.0, 0.0)
+        self.shader.set_material_diffuse(Color(1.0, 1.0, 0.0))
         self.model_matrix.add_scale(2, 2, 2)
         self.shader.set_model_matrix(self.model_matrix.matrix)
         self.sun.draw(self.shader)

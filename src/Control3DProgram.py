@@ -52,6 +52,21 @@ class GraphicsProgram3D:
         self.my_cube_position = Point(0.0, 0.0, 0.0)
         self.my_cube_position_factor = 0.0
 
+        self.skybox = self.load_texture(sys.path[0] + "/textures/white.png")
+
+    @staticmethod
+    def load_texture(path: str):
+        surface = pygame.image.load(path)
+        tex_string = pygame.image.tostring(surface, "RGBA", True)
+        width = surface.get_width()
+        height = surface.get_height()
+        tex_id = glGenTextures(1)
+        glBindTexture(GL_TEXTURE_2D, tex_id)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, tex_string)
+        return tex_id
+
     def spectator_movement(self, delta_time):
         # Movement
         if self.W_key_down:
@@ -95,7 +110,7 @@ class GraphicsProgram3D:
         glEnable(GL_DEPTH_TEST)
 
         glClearColor(0.0, 0.0, 0.0, 1.0)
-        glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         glViewport(0, 0, 800, 600)
         self.projection_matrix.set_perspective(
@@ -111,15 +126,15 @@ class GraphicsProgram3D:
         self.model_matrix.load_identity()
 
         # Sun
+        self.sphere.set_vertices(self.shader)
         self.model_matrix.push_matrix()
         self.model_matrix.add_scale(2, 2, 2)
         self.shader.set_model_matrix(self.model_matrix.matrix)
-        self.sphere.draw(self.shader)
+        self.sphere.draw()
         self.model_matrix.pop_matrix()
 
         # Rest of planets
         self.model_matrix.push_matrix()
-        print(self.planet_rotation)
         self.model_matrix.add_rotation_y(self.planet_rotation/pi)
         for i in range(8):
             self.model_matrix.push_matrix()
@@ -127,7 +142,7 @@ class GraphicsProgram3D:
             self.model_matrix.add_rotation_y(self.my_cube_position_factor)
             self.model_matrix.add_rotation_y(self.my_cube_position_factor)
             self.shader.set_model_matrix(self.model_matrix.matrix)
-            self.sphere.draw(self.shader) 
+            self.sphere.draw()
             self.model_matrix.pop_matrix()
         self.model_matrix.pop_matrix()
 
@@ -182,11 +197,12 @@ class GraphicsProgram3D:
             self.update()
             self.display()
 
-        #OUT OF GAME LOOP
+        # OUT OF GAME LOOP
         pygame.quit()
 
     def start(self):
         self.program_loop()
+
 
 if __name__ == "__main__":
     GraphicsProgram3D().start()

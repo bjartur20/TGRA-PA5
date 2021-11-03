@@ -64,15 +64,8 @@ class GraphicsProgram3D:
         self.S_key_down = False
         self.A_key_down = False
         self.D_key_down = False
-        self.one_key_down = False
-        self.two_key_down = False
-        self.three_key_down = False
-        self.four_key_down = False
-        self.five_key_down = False
-        self.six_key_down = False
-        self.seven_key_down = False
-        self.eight_key_down = False
-
+        self.views = [False] * 9
+        
         self.look_x = 0
         self.look_y = 0
 
@@ -169,23 +162,30 @@ class GraphicsProgram3D:
     def update(self):
         delta_time = self.clock.tick() / 1000.0
         curr_time = pygame.time.get_ticks()/1000
-
-        self.view_matrix.look(
-            Point(self.ship_pos.x+2, self.ship_pos.y, self.ship_pos.z),
-            self.ship_pos,
-            Vector(0, 1, 0)
-        )
-
+        print(self.planets[2].position % 1)
         # self.spectator_movement(delta_time)
 
-        # Individual planet view
-        if self.one_key_down:
-            planet_coords = self.planets[1].get_global_coords()
-            self.view_matrix.look(
-                
-                planet_coords,
-                Vector(0.0, 1.0, 0.0)
-            )
+        # Individual planet/space ship view
+        if any(self.views):
+            # Space ship view
+            if self.views[8]:
+                self.view_matrix.look(
+                    Point(self.ship_pos.x+1, self.ship_pos.y, self.ship_pos.z),
+                    self.ship_pos,
+                    Vector(0, 1, 0)
+                )
+            # Planetary view
+            else:
+                planet = [i for i, x in enumerate(self.views) if x][0]
+                planet_pos = self.planets[planet].get_global_coords()
+                self.view_matrix.look(
+                    Point(planet_pos.x+(self.planets[planet].size+2)*2, planet_pos.y, planet_pos.z),
+                    planet_pos,
+                    Vector(0.0, 1.0, 0.0)
+                )
+        # Free Movement
+        else:
+            self.spectator_movement(delta_time)
 
         # TODO: USE DELTA TIME FOR UPDATING PLANET POSITIONS
         for planet in self.planets:
@@ -200,10 +200,6 @@ class GraphicsProgram3D:
 
         # Bezier curve ship movement
         self.ship_pos = self.bezier_curve(self.bezier_points, curr_time)
-        # self.bezier_points.pop(0)
-        # self.bezier_points.append(Point(uniform(10.0, 100.0), uniform(10.0, 100.0), uniform(10.0, 100.0)))
-        # t = (curr_time - self.ship_start_moving)/(self.ship_end_moving - self.ship_start_moving)
-        # self.ship_pos = pow((1-t), 3) * self.bezier_points[0] + 3 * pow((1 - t), 2) * t * self.bezier_points[1] + 3 * (1 - t) * pow(t, 2) * self.bezier_points[2] + pow(t, 3) * self.bezier_points[3]
 
 ## DISPLAY ##
 
@@ -264,6 +260,13 @@ class GraphicsProgram3D:
 
         pygame.display.flip()
 
+    def change_view(self, key_idx):
+        for i in range(len(self.views)):
+            if i == key_idx:
+                self.views[i] = not self.views[i]
+            else:
+                self.views[i] = False
+
 ## PROGRAM EXECUTION ##
 
     def program_loop(self):
@@ -291,22 +294,25 @@ class GraphicsProgram3D:
                         self.A_key_down = True
                     if event.key == K_d:
                         self.D_key_down = True
+
                     if event.key == K_1:
-                        self.one_key_down = True
+                        self.change_view(0)
                     if event.key == K_2:
-                        self.two_key_down = True
+                        self.change_view(1)
                     if event.key == K_3:
-                        self.three_key_down = True
+                        self.change_view(2)
                     if event.key == K_4:
-                        self.four_key_down = True
+                        self.change_view(3)
                     if event.key == K_5:
-                        self.five_key_down = True
+                        self.change_view(4)
                     if event.key == K_6:
-                        self.six_key_down = True
+                        self.change_view(5)
                     if event.key == K_7:
-                        self.seven_key_down = True
+                        self.change_view(6)
                     if event.key == K_8:
-                        self.eight_key_down = True
+                        self.change_view(7)
+                    if event.key == K_9:
+                        self.change_view(8)
 
                 elif event.type == pygame.KEYUP:
                     if event.key == K_w:
@@ -317,22 +323,6 @@ class GraphicsProgram3D:
                         self.A_key_down = False
                     if event.key == K_d:
                         self.D_key_down = False
-                    if event.key == K_1:
-                        self.one_key_down = False
-                    if event.key == K_2:
-                        self.two_key_down = False
-                    if event.key == K_3:
-                        self.three_key_down = False
-                    if event.key == K_4:
-                        self.four_key_down = False
-                    if event.key == K_5:
-                        self.five_key_down = False
-                    if event.key == K_6:
-                        self.six_key_down = False
-                    if event.key == K_7:
-                        self.seven_key_down = False
-                    if event.key == K_8:
-                        self.eight_key_down = False
 
                 elif event.type == pygame.MOUSEMOTION:
                     self.look_x, self.look_y = pygame.mouse.get_rel()

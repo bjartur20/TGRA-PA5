@@ -1,6 +1,6 @@
-from math import pi
+from math import pi, sin, cos
 
-from Base3DObjects import Sphere, Color
+from Base3DObjects import Sphere, Color, Point
 from Shaders import Shader3D
 from Matrices import ModelMatrix
 
@@ -20,7 +20,7 @@ class Planet(Sphere):
         self.day = self.position#  * self.year_len
 
     def set_distance_from_sun(self, dist: float):
-        self.distance_from_sun = dist
+        self.distance_from_sun = dist * 10
 
     def set_year(self, year: int):
         self.year_len = year
@@ -34,8 +34,12 @@ class Planet(Sphere):
     def set_color(self, r, g, b):
         self.color = Color(r, g, b)
 
-    def get_global_coords(self):
-        pass
+    def get_global_coords(self) -> Point:
+        return Point(
+            self.distance_from_sun * cos(self.position * 2 * pi),
+            0.0,
+            -self.distance_from_sun * sin(self.position * 2 * pi)
+        )
 
     def draw(self, shader: Shader3D):
         super().draw(shader)
@@ -44,7 +48,7 @@ class Planet(Sphere):
         model_matrix.push_matrix()
         model_matrix.add_rotation_y(self.position * 2 * pi)
         shader.set_material_diffuse(self.color)
-        model_matrix.add_translation(self.distance_from_sun*10, 0, 0)
+        model_matrix.add_translation(self.distance_from_sun, 0, 0)
         model_matrix.add_rotation_x(self.day * 2 * pi)
         model_matrix.add_scale(self.size, self.size, self.size)
         shader.set_model_matrix(model_matrix.matrix)

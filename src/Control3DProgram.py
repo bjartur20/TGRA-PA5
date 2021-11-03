@@ -238,8 +238,10 @@ class GraphicsProgram3D:
 
         # Skybox/stars TODO: Add texture
         glActiveTexture(GL_TEXTURE0)
-        glBindTexture(GL_TEXTURE_2D, self.white_tex)
+        glBindTexture(GL_TEXTURE_2D, self.skybox_tex)
         self.shader.set_base_texture(0)
+
+        self.space.set_vertices(self.shader)
         self.model_matrix.push_matrix()
         self.model_matrix.add_scale(1000, 1000, 1000)
         self.shader.set_model_matrix(self.model_matrix.matrix)

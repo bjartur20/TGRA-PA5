@@ -224,7 +224,8 @@ class GraphicsProgram3D:
 
         self.sphere.set_vertices(self.shader)
         self.model_matrix.push_matrix()
-        self.shader.set_material_diffuse(Color(1.0, 1.0, 0.0))
+        material = Material(diffuse=Color(1.0, 1.0, 0.0))
+        self.shader.set_material(material)
         self.model_matrix.add_scale(2, 2, 2)
         self.shader.set_model_matrix(self.model_matrix.matrix)
         self.sun.draw()

@@ -1,6 +1,6 @@
 from math import pi
 
-from Base3DObjects import Sphere, Color
+from Base3DObjects import Sphere, Color, Material
 from Shaders import Shader3D
 from Matrices import ModelMatrix
 
@@ -44,7 +44,7 @@ class Planet(Sphere):
     def display(self, model_matrix: ModelMatrix, shader: Shader3D):
         model_matrix.push_matrix()
         model_matrix.add_rotation_y(self.position * 2 * pi)
-        shader.set_material_diffuse(self.color)
+        shader.set_material(Material(diffuse=self.color))
         model_matrix.add_translation(self.distance_from_sun*10, 0, 0)
         model_matrix.add_rotation_x(self.day * 2 * pi)
         model_matrix.add_scale(self.size, self.size, self.size)

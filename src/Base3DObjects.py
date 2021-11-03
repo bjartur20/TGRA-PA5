@@ -54,17 +54,23 @@ class Vector:
 
 
 class Color:
-    def __init__(self, r, g, b):
+    def __init__(self, r, g, b, a=1.0):
         self.r = r
         self.g = g
         self.b = b
+        self.a = a
+
+    def values(self):
+        return self.r, self.g, self.b, self.a
 
 
 class Material:
-    def __init__(self, diffuse=None, specular=None, shininess=None):
+    def __init__(self, diffuse=None, specular=None, shininess=None, ambient=None, emission=None):
         self.diffuse = Color(0.0, 0.0, 0.0) if diffuse is None else diffuse
         self.specular = Color(0.0, 0.0, 0.0) if specular is None else specular
         self.shininess = 1 if shininess is None else shininess
+        self.ambient = Color(0.0, 0.0, 0.0) if ambient is None else ambient
+        self.emission = Color(0.0, 0.0, 0.0) if emission is None else emission
 
 
 class Cube:

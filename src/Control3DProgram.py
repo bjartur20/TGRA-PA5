@@ -52,7 +52,8 @@ class GraphicsProgram3D:
         self.my_cube_position = Point(0.0, 0.0, 0.0)
         self.my_cube_position_factor = 0.0
 
-        self.skybox = self.load_texture(sys.path[0] + "/textures/white.png")
+        self.skybox_tex = self.load_texture(sys.path[0] + "/textures/stars.jpg")
+        self.white_tex = self.load_texture(sys.path[0] + "/textures/white.png")
 
     @staticmethod
     def load_texture(path: str):
@@ -125,7 +126,23 @@ class GraphicsProgram3D:
 
         self.model_matrix.load_identity()
 
+        # Skybox
+        glActiveTexture(GL_TEXTURE0)
+        glBindTexture(GL_TEXTURE_2D, self.skybox_tex)
+        self.shader.set_base_texture(0)
+
+        self.cube.set_vertices(self.shader)
+        self.model_matrix.push_matrix()
+        self.model_matrix.add_scale(20, 20, 20)
+        self.shader.set_model_matrix(self.model_matrix.matrix)
+        self.cube.draw()
+        self.model_matrix.pop_matrix()
+
         # Sun
+        glActiveTexture(GL_TEXTURE0)
+        glBindTexture(GL_TEXTURE_2D, self.white_tex)
+        self.shader.set_base_texture(0)
+
         self.sphere.set_vertices(self.shader)
         self.model_matrix.push_matrix()
         self.model_matrix.add_scale(2, 2, 2)

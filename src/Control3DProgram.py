@@ -65,8 +65,7 @@ class GraphicsProgram3D:
 
         self.speed = 5
 
-        # self.light_position = Point(0.0, 0.0, 5.0)
-        self.light_position = Point(0.0, 0.0, 20.0)
+        self.light_position = Point(0.0, 0.0, 0.0)
         self.light_position_factor = 0.0
 
         self.my_cube_position = Point(0.0, 0.0, 0.0)
@@ -123,8 +122,10 @@ class GraphicsProgram3D:
         self.planets[7].set_distance_from_sun(30.1)
         self.planets[7].set_color(0.29, 0.44, 0.87)
 
-        white = Color(1.0, 1.0, 1.0)
-        self.light = Light(self.light_position, white, white, white)
+        self.light = Light(self.light_position, Color(1.0, 1.0, 1.0), Color(1.0, 1.0, 1.0),
+                           Color(1.0, 1.0, 1.0), Vector(1.0, 0.022, 0.0019))
+        self.sun_material = Material(emission=Color(0.8, 0.7, 0.0))
+        self.skybox_material = Material(emission=Color(0.2, 0.2, 0.2))
 
         self.skybox_tex = self.load_texture(sys.path[0] + "/textures/stars.jpg")
         self.white_tex = self.load_texture(sys.path[0] + "/textures/white.png")
@@ -176,7 +177,7 @@ class GraphicsProgram3D:
 
         # TODO: USE DELTA TIME FOR UPDATING PLANET POSITIONS
         for planet in self.planets:
-            planet.update(pygame.time.get_ticks()/1000)
+            planet.update(pygame.time.get_ticks() / 1000)
 
         self.light_position_factor += delta_time * pi / 10
         self.light_position.x = -cos(self.light_position_factor) * 5.0
@@ -223,10 +224,9 @@ class GraphicsProgram3D:
         glBindTexture(GL_TEXTURE_2D, self.white_tex)
         self.shader.set_base_texture(0)
 
+        self.shader.set_material(self.sun_material)
         self.sphere.set_vertices(self.shader)
         self.model_matrix.push_matrix()
-        material = Material(diffuse=Color(1.0, 1.0, 0.0))
-        self.shader.set_material(material)
         self.model_matrix.add_scale(2, 2, 2)
         self.shader.set_model_matrix(self.model_matrix.matrix)
         self.sun.draw()
@@ -243,6 +243,7 @@ class GraphicsProgram3D:
         glBindTexture(GL_TEXTURE_2D, self.skybox_tex)
         self.shader.set_base_texture(0)
 
+        self.shader.set_material(self.skybox_material)
         self.space.set_vertices(self.shader)
         self.model_matrix.push_matrix()
         self.model_matrix.add_scale(1000, 1000, 1000)

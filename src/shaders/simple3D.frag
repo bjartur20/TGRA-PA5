@@ -7,6 +7,7 @@ uniform float u_material_shininess;
 uniform vec4 u_light_ambient;
 uniform vec4 u_light_diffuse;
 uniform vec4 u_light_specular;
+uniform vec4 u_light_attenuation;
 
 uniform vec4 u_global_ambient;
 

@@ -55,6 +55,7 @@ class Shader3D:
         self.lightAmbientLoc        = glGetUniformLocation(self.renderingProgramID, "u_light_ambient")
         self.lightDiffuseLoc        = glGetUniformLocation(self.renderingProgramID, "u_light_diffuse")
         self.lightSpecularLoc       = glGetUniformLocation(self.renderingProgramID, "u_light_specular")
+        self.lightAttenuationLoc    = glGetUniformLocation(self.renderingProgramID, "U_light_attenuation")
         self.globalAmbientLoc       = glGetUniformLocation(self.renderingProgramID, "u_global_ambient")
 
         self.materialAmbientLoc     = glGetUniformLocation(self.renderingProgramID, "u_material_ambient")
@@ -86,6 +87,9 @@ class Shader3D:
         glUniform4f(self.lightAmbientLoc, *light.ambient.values())
         glUniform4f(self.lightDiffuseLoc, *light.diffuse.values())
         glUniform4f(self.lightSpecularLoc, *light.specular.values())
+
+        c, l, q = light.attenuation.x, light.attenuation.y, light.attenuation.z
+        glUniform3f(self.lightAttenuationLoc, c, l, q)
 
     def set_position_attribute(self, vertex_array):
         glVertexAttribPointer(self.positionLoc, 3, GL_FLOAT, False, 0, vertex_array)

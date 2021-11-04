@@ -5,7 +5,11 @@ The "game" models our solar system with all 8 planets and a spaceship jumping ar
 the planets are in real size related to each other and at the correct relative distance from
 the sun but the sun itself is a lot smaller than in reality since it is quite massive.
 They also rotate at the correct speed around the sun and around themselves but not exactly 
-in relation to the speed at which they spin around the sun. 
+in relation to the speed at which they spin around the sun.  
+
+To run the program just simply install the required packages found in the requirements.txt file
+and execute the Control3DProgram.py with python and everything should start up and work as intended. 
+
 The controls are quite simple allowing for a very basic spectator navigation but also allowing 
 the camera to be locked around any of the 8 planets or 1 spaceship using the 1-9 keys on the
 keyboard. Once locked Q and E can be used to rotate around the planet or spaceship. All planet
@@ -13,5 +17,5 @@ textures are in 2k except for the earth which is in 8k, has a specular map, clou
 side texture as well.
 
 # Authors
-Bjartur Þorhallsson - bjartur19@ru.is
+Bjartur Þorhallsson - bjartur19@ru.is  
 Gudjon Ingi Valdimarsson - gudjonv18@ru.is 

@@ -79,60 +79,69 @@ class GraphicsProgram3D:
         self.planets[0].set_year(88*scalar)
         self.planets[0].set_distance_from_sun(0.4)
         self.planets[0].set_color(0.86, 0.81, 0.79)
+        self.planets[0].set_texture(self.load_texture("2k_mercury.jpg"))
         # Venus
         self.planets[1].set_name("Venus")
         self.planets[1].set_size(EARTH_SIZE-0.1)
         self.planets[1].set_year(225*scalar)
         self.planets[1].set_distance_from_sun(0.7)
         self.planets[1].set_color(0.65, 0.49, 0.11)
+        self.planets[1].set_texture(self.load_texture("2k_venus_surface.jpg"))
         # # Earth
         self.planets[2].set_name("Earth")
         self.planets[2].set_size(EARTH_SIZE)
         self.planets[2].set_year(365*scalar)
         self.planets[2].set_distance_from_sun(1)
         self.planets[2].set_color(0.49, 0.64, 0.49)
+        self.planets[2].set_texture(self.load_texture("2k_earth_daymap.jpg"))
         # # Mars
         self.planets[3].set_name("Mars")
         self.planets[3].set_size(EARTH_SIZE/2)
         self.planets[3].set_year(687*scalar)
         self.planets[3].set_distance_from_sun(1.5)
         self.planets[3].set_color(0.76, 0.27, 0.05)
+        self.planets[3].set_texture(self.load_texture("2k_mars.jpg"))
         # # Jupiter
         self.planets[4].set_name("Jupiter")
         self.planets[4].set_size(EARTH_SIZE*11)
         self.planets[4].set_year(4329*scalar)
         self.planets[4].set_distance_from_sun(5.2)
         self.planets[4].set_color(0.89, 0.86, 0.80)
+        self.planets[4].set_texture(self.load_texture("2k_jupiter.jpg"))
         # # Saturn
         self.planets[5].set_name("Saturn")
         self.planets[5].set_size(EARTH_SIZE*9)
         self.planets[5].set_year(10738*scalar)
         self.planets[5].set_distance_from_sun(9.5)
         self.planets[5].set_color(0.89, 0.88, 0.75)
+        self.planets[5].set_texture(self.load_texture("2k_saturn.jpg"))
         # # Uranus
         self.planets[6].set_name("Uranus")
         self.planets[6].set_size(EARTH_SIZE*4)
         self.planets[6].set_year(30569*scalar)
         self.planets[6].set_distance_from_sun(19.8)
         self.planets[6].set_color(0.73, 0.88, 0.89)
+        self.planets[6].set_texture(self.load_texture("2k_uranus.jpg"))
         # # Naptune
         self.planets[7].set_name("Neptune")
         self.planets[7].set_size(EARTH_SIZE*4-0.01)
         self.planets[7].set_year(59769*scalar)
         self.planets[7].set_distance_from_sun(30.1)
         self.planets[7].set_color(0.29, 0.44, 0.87)
+        self.planets[7].set_texture(self.load_texture("2k_neptune.jpg"))
 
         self.light = Light(self.light_position, Color(0.8, 0.8, 0.8), Color(0.8, 0.8, 0.8), Color(0.8, 0.8, 0.8))
         self.sun_material = Material(emission=Color(0.8, 0.7, 0.0))
         self.skybox_material = Material(emission=Color(0.2, 0.2, 0.2))
 
-        self.skybox_tex = self.load_texture(sys.path[0] + "/textures/stars.jpg")
-        self.white_tex = self.load_texture(sys.path[0] + "/textures/white.png")
-        self.black_tex = self.load_texture(sys.path[0] + "/textures/black.png")
+        self.skybox_tex = self.load_texture("stars.jpg")
+        self.white_tex = self.load_texture("white.png")
+        self.black_tex = self.load_texture("black.png")
+        self.sun_tex = self.load_texture("2k_sun.jpg")
 
     @staticmethod
-    def load_texture(path: str):
-        surface = pygame.image.load(path)
+    def load_texture(filename: str):
+        surface = pygame.image.load(sys.path[0] + f"/textures/{filename}")
         tex_string = pygame.image.tostring(surface, "RGBA", True)
         width = surface.get_width()
         height = surface.get_height()
@@ -222,7 +231,7 @@ class GraphicsProgram3D:
 
         # Sun
         glActiveTexture(GL_TEXTURE0)
-        glBindTexture(GL_TEXTURE_2D, self.white_tex)
+        glBindTexture(GL_TEXTURE_2D, self.sun_tex)
         self.shader.set_base_texture(0)
 
         self.shader.set_material(self.sun_material)
@@ -233,6 +242,9 @@ class GraphicsProgram3D:
         self.sun.draw()
         self.model_matrix.pop_matrix()
 
+        glActiveTexture(GL_TEXTURE0)
+        glBindTexture(GL_TEXTURE_2D, self.white_tex)
+        self.shader.set_base_texture(0)
         # Planets
         self.model_matrix.push_matrix()
         for planet in self.planets:

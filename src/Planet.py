@@ -1,5 +1,7 @@
 from math import pi
 
+from OpenGL.GL import *
+
 from Base3DObjects import Sphere, Color, Material
 from Shaders import Shader3D
 from Matrices import ModelMatrix
@@ -15,6 +17,7 @@ class Planet(Sphere):
         self.day = 0
         self.position = 0
         self.color = Color(1.0, 1.0, 1.0)
+        self.base_texture_id = 1
 
     def update(self, t: int):
         self.position = (t / self.year_len)
@@ -35,6 +38,9 @@ class Planet(Sphere):
     def set_color(self, r, g, b):
         self.color = Color(r, g, b)
 
+    def set_texture(self, texture_id: int):
+        self.base_texture_id = texture_id
+
     def get_global_coords(self):
         pass
 
@@ -42,6 +48,9 @@ class Planet(Sphere):
         super().draw()
 
     def display(self, model_matrix: ModelMatrix, shader: Shader3D):
+        glActiveTexture(GL_TEXTURE0)
+        glBindTexture(GL_TEXTURE_2D, self.base_texture_id)
+        shader.set_base_texture(0)
         model_matrix.push_matrix()
         model_matrix.add_rotation_y(self.position * 2 * pi)
         shader.set_material(Material(diffuse=self.color))

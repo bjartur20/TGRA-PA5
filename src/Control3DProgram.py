@@ -288,6 +288,7 @@ class GraphicsProgram3D:
         # Space ship
         glActiveTexture(GL_TEXTURE0)
         glBindTexture(GL_TEXTURE_2D, self.white_tex)
+        self.shader.set_base_texture(0)
         self.model_matrix.push_matrix()
         self.model_matrix.add_translation(
             self.ship_pos.x, self.ship_pos.y, self.ship_pos.z
@@ -398,9 +399,9 @@ class GraphicsProgram3D:
                     if event.key == K_d:
                         self.D_key_down = False
 
-                self.look_x, self.look_y = pygame.mouse.get_rel()
-                self.look_y *= -1
-                self.look_x *= -1
+            self.look_x, self.look_y = pygame.mouse.get_rel()
+            self.look_y *= -0.3
+            self.look_x *= -0.3
 
             if len(events) == 0:
                 self.look_x = self.look_y = 0

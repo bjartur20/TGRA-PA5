@@ -65,6 +65,7 @@ class Shader3D:
         self.materialShininessLoc   = glGetUniformLocation(self.renderingProgramID, "u_material_shininess")
 
         self.textureBaseLoc = glGetUniformLocation(self.renderingProgramID, "u_tex_base")
+        self.textureSpecLoc = glGetUniformLocation(self.renderingProgramID, "u_tex_specular")
 
     def use(self):
         try:
@@ -102,6 +103,9 @@ class Shader3D:
 
     def set_base_texture(self, number: int):
         glUniform1i(self.textureBaseLoc, number)
+
+    def set_specular_texture(self, number: int):
+        glUniform1i(self.textureSpecLoc, number)
 
     def set_eye_position(self, pos):
         glUniform4f(self.eyePosLoc, pos.x, pos.y, pos.z, 1.0)

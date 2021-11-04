@@ -18,7 +18,7 @@ from ObjLoader import ObjLoader
 
 EARTH_SIZE = 0.5
 EARTH_SPEED = 0.1
-WINDOW_SIZE = (1920, 1080)  # (800, 600)
+WINDOW_SIZE = (1600, 900)  # (800, 600)
 
 
 class GraphicsProgram3D:
@@ -80,9 +80,6 @@ class GraphicsProgram3D:
 
         self.speed = 5
 
-        self.light_position = Point(0.0, 0.0, 0.0)
-        self.light_position_factor = 0.0
-
         self.my_cube_position = Point(0.0, 0.0, 0.0)
         self.my_cube_position_factor = 0.0
 
@@ -108,7 +105,8 @@ class GraphicsProgram3D:
         self.planets[2].set_year(365 * scalar)
         self.planets[2].set_distance_from_sun(1)
         self.planets[2].set_material(1.0, 1.0, 1.0)
-        self.planets[2].set_texture(self.load_texture("2k_earth_daymap.jpg"))
+        self.planets[2].set_texture(self.load_texture("8k_earth_daymap.jpg"))
+        self.planets[2].set_spec_texture(self.load_texture("8k_earth_specular_map.png"))
         # # Mars
         self.planets[3].set_name("Mars")
         self.planets[3].set_size(EARTH_SIZE / 2)
@@ -146,7 +144,7 @@ class GraphicsProgram3D:
         self.planets[7].set_texture(self.load_texture("2k_neptune.jpg"))
 
         self.light = Light(
-            self.light_position,
+            Point(0.0, 0.0, 0.0),
             Color(0.8, 0.8, 0.8),
             Color(0.8, 0.8, 0.8),
             Color(0.8, 0.8, 0.8),

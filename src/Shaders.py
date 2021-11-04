@@ -88,9 +88,6 @@ class Shader3D:
         glUniform4f(self.lightDiffuseLoc, *light.diffuse.values())
         glUniform4f(self.lightSpecularLoc, *light.specular.values())
 
-        c, l, q = light.attenuation.x, light.attenuation.y, light.attenuation.z
-        glUniform4f(self.lightAttenuationLoc, c, l, q, 0.0)
-
     def set_global_ambient(self, r, g, b):
         glUniform4f(self.globalAmbientLoc, r, g, b, 1.0)
 

@@ -80,12 +80,11 @@ class Material:
 
 
 class Light:
-    def __init__(self, position=None, ambient=None, diffuse=None, specular=None, attenuation=None):
+    def __init__(self, position=None, ambient=None, diffuse=None, specular=None):
         self.position = Point(0.0, 0.0, 0.0) if position is None else position
         self.ambient = Color(0.0, 0.0, 0.0) if ambient is None else ambient
         self.diffuse = Color(0.0, 0.0, 0.0) if diffuse is None else diffuse
         self.specular = Color(0.0, 0.0, 0.0) if specular is None else specular
-        self.attenuation = Vector(1.0, 0.0, 0.0) if attenuation is None else attenuation
 
 
 class Cube:
@@ -222,6 +221,7 @@ class MeshModel:
 class Sphere:
     def __init__(self, stacks: int = 12, slices: int = 24):
         self.vertex_array: list = []
+        self.uv_array: list = []
         self.slices: int = slices
 
         stack_interval = pi / stacks
@@ -242,9 +242,15 @@ class Sphere:
 
                 self.vertex_count += 2
 
+                self.uv_array.append(slice_count / slices)
+                self.uv_array.append(stack_count / stacks)
+                self.uv_array.append(slice_count / slices)
+                self.uv_array.append((stack_count + 1) / stacks)
+
     def set_vertices(self, shader):
         shader.set_position_attribute(self.vertex_array)
         shader.set_normal_attribute(self.vertex_array)
+        shader.set_uv_attribute(self.uv_array)
 
     def draw(self):
         for i in range(0, self.vertex_count, (self.slices + 1) * 2):

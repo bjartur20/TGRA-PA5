@@ -1,6 +1,8 @@
 from math import pi, sin, cos
 
-from Base3DObjects import Sphere, Color, Point, Material
+from OpenGL.GL import *
+
+from Base3DObjects import Point, Sphere, Color, Material
 from Shaders import Shader3D
 from Matrices import ModelMatrix
 
@@ -14,10 +16,11 @@ class Planet(Sphere):
         self.name = ""
         self.day = 0
         self.position = 0
-        self.color = Color(1.0, 1.0, 1.0)
+        self.material = Material()
+        self.base_texture_id = 1
 
     def update(self, t: int):
-        self.position = (t / self.year_len)
+        self.position = t / self.year_len
         self.day = self.position  # * self.year_len
 
     def set_distance_from_sun(self, dist: float):
@@ -31,23 +34,27 @@ class Planet(Sphere):
 
     def set_name(self, name: str):
         self.name = name
-    
-    def set_material(self, r, g, b):
-        self.material = Material(
-            diffuse=Color(r, g, b)
-        )
 
-    def get_global_coords(self) -> Point:
+    def set_material(self, r, g, b):
+        self.material = Material(Color(r, g, b))
+
+    def set_texture(self, texture_id: int):
+        self.base_texture_id = texture_id
+
+    def get_global_coords(self):
         return Point(
             self.distance_from_sun * cos(self.position * 2 * pi),
             0.0,
-            -self.distance_from_sun * sin(self.position * 2 * pi)
+            -self.distance_from_sun * sin(self.position * 2 * pi),
         )
 
     def draw(self):
         super().draw()
 
     def display(self, model_matrix: ModelMatrix, shader: Shader3D):
+        glActiveTexture(GL_TEXTURE0)
+        glBindTexture(GL_TEXTURE_2D, self.base_texture_id)
+        shader.set_base_texture(0)
         model_matrix.push_matrix()
         model_matrix.add_rotation_y(self.position * 2 * pi)
         shader.set_material(self.material)

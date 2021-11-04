@@ -52,11 +52,16 @@ class Shader3D:
         self.projectionMatrixLoc	= glGetUniformLocation(self.renderingProgramID, "u_projection_matrix")
 
         self.lightPosLoc            = glGetUniformLocation(self.renderingProgramID, "u_light_position")
+        self.lightAmbientLoc        = glGetUniformLocation(self.renderingProgramID, "u_light_ambient")
         self.lightDiffuseLoc        = glGetUniformLocation(self.renderingProgramID, "u_light_diffuse")
         self.lightSpecularLoc       = glGetUniformLocation(self.renderingProgramID, "u_light_specular")
+        self.lightAttenuationLoc    = glGetUniformLocation(self.renderingProgramID, "U_light_attenuation")
+        self.globalAmbientLoc       = glGetUniformLocation(self.renderingProgramID, "u_global_ambient")
 
+        self.materialAmbientLoc     = glGetUniformLocation(self.renderingProgramID, "u_material_ambient")
         self.materialDiffuseLoc     = glGetUniformLocation(self.renderingProgramID, "u_material_diffuse")
         self.materialSpecularLoc    = glGetUniformLocation(self.renderingProgramID, "u_material_specular")
+        self.materialEmissionLoc    = glGetUniformLocation(self.renderingProgramID, "u_material_emission")
         self.materialShininessLoc   = glGetUniformLocation(self.renderingProgramID, "u_material_shininess")
 
         self.textureBaseLoc = glGetUniformLocation(self.renderingProgramID, "u_tex_base")
@@ -77,14 +82,17 @@ class Shader3D:
     def set_projection_matrix(self, matrix_array):
         glUniformMatrix4fv(self.projectionMatrixLoc, 1, True, matrix_array)
 
-    def set_light_position(self, pos):
-        glUniform4f(self.lightPosLoc, pos.x, pos.y, pos.z, 1.0)
+    def set_light(self, light: Light):
+        glUniform4f(self.lightPosLoc, *light.position.values())
+        glUniform4f(self.lightAmbientLoc, *light.ambient.values())
+        glUniform4f(self.lightDiffuseLoc, *light.diffuse.values())
+        glUniform4f(self.lightSpecularLoc, *light.specular.values())
 
-    def set_light_specular(self, r, g, b):
-        glUniform4f(self.lightSpecularLoc, r, g, b, 1.0)
+        c, l, q = light.attenuation.x, light.attenuation.y, light.attenuation.z
+        glUniform4f(self.lightAttenuationLoc, c, l, q, 0.0)
 
-    def set_light_diffuse(self, r, g, b):
-        glUniform4f(self.lightDiffuseLoc, r, g, b, 1.0)
+    def set_global_ambient(self, r, g, b):
+        glUniform4f(self.globalAmbientLoc, r, g, b, 1.0)
 
     def set_position_attribute(self, vertex_array):
         glVertexAttribPointer(self.positionLoc, 3, GL_FLOAT, False, 0, vertex_array)
@@ -101,17 +109,14 @@ class Shader3D:
     def set_eye_position(self, pos):
         glUniform4f(self.eyePosLoc, pos.x, pos.y, pos.z, 1.0)
 
-    def set_material_specular(self, color: Color):
-        glUniform4f(self.materialSpecularLoc, color.r, color.g, color.b, 1.0)
-
-    def set_material_diffuse(self, color: Color):
-        glUniform4f(self.materialDiffuseLoc, color.r, color.g, color.b, 1.0)
-
-    def set_material_shininess(self, shininess):
-        glUniform1f(self.materialShininessLoc, shininess)
+    def set_material(self, material: Material):
+        glUniform4f(self.materialAmbientLoc, *material.ambient.values())
+        glUniform4f(self.materialDiffuseLoc, *material.diffuse.values())
+        glUniform4f(self.materialSpecularLoc, *material.specular.values())
+        glUniform4f(self.materialEmissionLoc, *material.emission.values())
+        glUniform1f(self.materialShininessLoc, material.shininess)
 
     def set_attribute_buffers(self, vertex_buffer_id):
-        glDisableVertexAttribArray(self.uvLoc)
         glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_id)
         glVertexAttribPointer(self.positionLoc, 3, GL_FLOAT, False, 6 * sizeof(GLfloat), OpenGL.GLU.ctypes.c_void_p(0))
         glVertexAttribPointer(self.normalLoc, 3, GL_FLOAT, False, 6 * sizeof(GLfloat),

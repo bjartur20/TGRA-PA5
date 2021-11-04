@@ -11,20 +11,20 @@ import time
 
 from Shaders import Shader3D
 from Matrices import ModelMatrix, ViewMatrix, ProjectionMatrix
-from Base3DObjects import Point, Vector, Cube, Sphere, Color
+from Base3DObjects import Point, Vector, Cube, Sphere, Color, Light, Material
 from Planet import Planet
 from Space import Space
 from ObjLoader import ObjLoader
 
 EARTH_SIZE = 0.5
 EARTH_SPEED = 0.1
-
+WINDOW_SIZE = (1920, 1080) # (800, 600)
 
 class GraphicsProgram3D:
     def __init__(self):
 
         pygame.init() 
-        pygame.display.set_mode((800,600), pygame.OPENGL|pygame.DOUBLEBUF)
+        pygame.display.set_mode(WINDOW_SIZE, pygame.OPENGL|pygame.DOUBLEBUF)
 
         self.shader = Shader3D()
         self.shader.use()
@@ -37,7 +37,7 @@ class GraphicsProgram3D:
         self.shader.set_view_matrix(self.view_matrix.get_matrix())
 
         self.fov = pi / 2
-        self.projection_matrix.set_perspective(self.fov, 800 / 600, 0.5, 10)
+        self.projection_matrix.set_perspective(self.fov, WINDOW_SIZE[0] / WINDOW_SIZE[1], 0.5, 10)
         self.shader.set_projection_matrix(self.projection_matrix.get_matrix())
 
         self.cube = Cube()
@@ -74,8 +74,7 @@ class GraphicsProgram3D:
 
         self.speed = 5
 
-        # self.light_position = Point(0.0, 0.0, 5.0)
-        self.light_position = Point(0.0, 0.0, 20.0)
+        self.light_position = Point(0.0, 0.0, 0.0)
         self.light_position_factor = 0.0
 
         self.my_cube_position = Point(0.0, 0.0, 0.0)
@@ -88,49 +87,54 @@ class GraphicsProgram3D:
         self.planets[0].set_size(EARTH_SIZE/3)
         self.planets[0].set_year(88*scalar)
         self.planets[0].set_distance_from_sun(0.4)
-        self.planets[0].set_color(0.86, 0.81, 0.79)
+        self.planets[0].set_material(0.86, 0.81, 0.79)
         # Venus
         self.planets[1].set_name("Venus")
         self.planets[1].set_size(EARTH_SIZE-0.1)
         self.planets[1].set_year(225*scalar)
         self.planets[1].set_distance_from_sun(0.7)
-        self.planets[1].set_color(0.65, 0.49, 0.11)
+        self.planets[1].set_material(0.65, 0.49, 0.11)
         # # Earth
         self.planets[2].set_name("Earth")
         self.planets[2].set_size(EARTH_SIZE)
         self.planets[2].set_year(365*scalar)
         self.planets[2].set_distance_from_sun(1)
-        self.planets[2].set_color(0.49, 0.64, 0.49)
+        self.planets[2].set_material(0.49, 0.64, 0.49)
         # # Mars
         self.planets[3].set_name("Mars")
         self.planets[3].set_size(EARTH_SIZE/2)
         self.planets[3].set_year(687*scalar)
         self.planets[3].set_distance_from_sun(1.5)
-        self.planets[3].set_color(0.76, 0.27, 0.05)
+        self.planets[3].set_material(0.76, 0.27, 0.05)
         # # Jupiter
         self.planets[4].set_name("Jupiter")
         self.planets[4].set_size(EARTH_SIZE*11)
         self.planets[4].set_year(4329*scalar)
         self.planets[4].set_distance_from_sun(5.2)
-        self.planets[4].set_color(0.89, 0.86, 0.80)
+        self.planets[4].set_material(0.89, 0.86, 0.80)
         # # Saturn
         self.planets[5].set_name("Saturn")
         self.planets[5].set_size(EARTH_SIZE*9)
         self.planets[5].set_year(10738*scalar)
         self.planets[5].set_distance_from_sun(9.5)
-        self.planets[5].set_color(0.89, 0.88, 0.75)
+        self.planets[5].set_material(0.89, 0.88, 0.75)
         # # Uranus
         self.planets[6].set_name("Uranus")
         self.planets[6].set_size(EARTH_SIZE*4)
         self.planets[6].set_year(30569*scalar)
         self.planets[6].set_distance_from_sun(19.8)
-        self.planets[6].set_color(0.73, 0.88, 0.89)
+        self.planets[6].set_material(0.73, 0.88, 0.89)
         # # Naptune
         self.planets[7].set_name("Neptune")
         self.planets[7].set_size(EARTH_SIZE*4-0.01)
         self.planets[7].set_year(59769*scalar)
         self.planets[7].set_distance_from_sun(30.1)
-        self.planets[7].set_color(0.29, 0.44, 0.87)
+        self.planets[7].set_material(0.29, 0.44, 0.87)
+
+        self.light = Light(self.light_position, Color(0.8, 0.8, 0.8), Color(0.8, 0.8, 0.8),
+                           Color(0.8, 0.8, 0.8), Vector(1.0, 0.7, 1.8))
+        self.sun_material = Material(emission=Color(0.8, 0.7, 0.0))
+        self.skybox_material = Material(emission=Color(0.2, 0.2, 0.2))
 
         self.skybox_tex = self.load_texture(sys.path[0] + "/textures/stars.jpg")
         self.white_tex = self.load_texture(sys.path[0] + "/textures/white.png")
@@ -227,12 +231,12 @@ class GraphicsProgram3D:
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glEnable(GL_DEPTH_TEST)
 
-        glViewport(0, 0, 800, 600)
+        glViewport(0, 0, WINDOW_SIZE[0], WINDOW_SIZE[1])
         self.projection_matrix.set_perspective(
-                    pi/2,    # FOV
-                    800/600, # Aspect ratio
-                    0.1,     # Near plane
-                    1000     # Far plane
+                    pi/2,                          # FOV
+                    WINDOW_SIZE[0]/WINDOW_SIZE[1], # Aspect ratio
+                    0.1,                           # Near plane
+                    1000                           # Far plane
         )
         self.shader.set_projection_matrix(self.projection_matrix.get_matrix())
         self.shader.set_view_matrix(self.view_matrix.get_matrix())
@@ -240,44 +244,44 @@ class GraphicsProgram3D:
         self.shader.set_eye_position(self.view_matrix.eye)
 
         # Setup light
-        self.shader.set_light_position(self.light_position)
-        self.shader.set_light_diffuse(1.0, 1.0, 1.0)
-        self.shader.set_light_specular(1.0, 1.0, 1.0)
+        self.shader.set_light(self.light)
+        self.shader.set_global_ambient(0.0, 0.0, 0.0)
 
         self.model_matrix.load_identity()
 
         # Space ship
-        self.model_matrix.push_matrix()
-        self.model_matrix.add_translation(self.ship_pos.x, self.ship_pos.y, self.ship_pos.z)
-        self.model_matrix.add_scale(0.01, 0.01, 0.01)
-        self.shader.set_model_matrix(self.model_matrix.matrix)
-        self.ship.draw(self.shader)
-        self.model_matrix.pop_matrix()
+        # self.model_matrix.push_matrix()
+        # self.model_matrix.add_translation(self.ship_pos.x, self.ship_pos.y, self.ship_pos.z)
+        # self.model_matrix.add_scale(0.01, 0.01, 0.01)
+        # self.shader.set_model_matrix(self.model_matrix.matrix)
+        # self.ship.draw(self.shader)
+        # self.model_matrix.pop_matrix()
         
         # Sun
         glActiveTexture(GL_TEXTURE0)
         glBindTexture(GL_TEXTURE_2D, self.white_tex)
         self.shader.set_base_texture(0)
 
+        self.shader.set_material(self.sun_material)
         self.sphere.set_vertices(self.shader)
         self.model_matrix.push_matrix()
-        self.shader.set_material_diffuse(Color(1.0, 1.0, 0.0))
         self.model_matrix.add_scale(2, 2, 2)
         self.shader.set_model_matrix(self.model_matrix.matrix)
         self.sun.draw()
         self.model_matrix.pop_matrix()
 
         # Planets
-        self.model_matrix.push_matrix()
-        for planet in self.planets:
-            planet.display(self.model_matrix, self.shader)
-        self.model_matrix.pop_matrix()
+        # self.model_matrix.push_matrix()
+        # for planet in self.planets:
+        #     planet.display(self.model_matrix, self.shader)
+        # self.model_matrix.pop_matrix()
 
         # Skybox/stars TODO: Add texture
         glActiveTexture(GL_TEXTURE0)
         glBindTexture(GL_TEXTURE_2D, self.skybox_tex)
         self.shader.set_base_texture(0)
 
+        self.shader.set_material(self.skybox_material)
         self.space.set_vertices(self.shader)
         self.model_matrix.push_matrix()
         self.model_matrix.add_scale(1000, 1000, 1000)

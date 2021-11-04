@@ -1,6 +1,6 @@
 from math import pi, sin, cos
 
-from Base3DObjects import Sphere, Color, Point
+from Base3DObjects import Sphere, Color, Point, Material
 from Shaders import Shader3D
 from Matrices import ModelMatrix
 
@@ -32,8 +32,10 @@ class Planet(Sphere):
     def set_name(self, name: str):
         self.name = name
     
-    def set_color(self, r, g, b):
-        self.color = Color(r, g, b)
+    def set_material(self, r, g, b):
+        self.material = Material(
+            diffuse=Color(r, g, b)
+        )
 
     def get_global_coords(self) -> Point:
         return Point(
@@ -48,7 +50,7 @@ class Planet(Sphere):
     def display(self, model_matrix: ModelMatrix, shader: Shader3D):
         model_matrix.push_matrix()
         model_matrix.add_rotation_y(self.position * 2 * pi)
-        shader.set_material_diffuse(self.color)
+        shader.set_material(self.material)
         model_matrix.add_translation(self.distance_from_sun, 0, 0)
         model_matrix.add_rotation_x(self.day * 2 * pi)
         model_matrix.add_scale(self.size, self.size, self.size)

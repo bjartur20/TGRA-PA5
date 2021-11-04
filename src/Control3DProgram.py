@@ -86,63 +86,63 @@ class GraphicsProgram3D:
         self.my_cube_position = Point(0.0, 0.0, 0.0)
         self.my_cube_position_factor = 0.0
 
-        scalar = 1 / 75
+        scalar = 1
         # Configure each planet
         # Mercury
         self.planets[0].set_name("Mercury")
         self.planets[0].set_size(EARTH_SIZE / 3)
         self.planets[0].set_year(88 * scalar)
         self.planets[0].set_distance_from_sun(0.4)
-        self.planets[0].set_material(0.86, 0.81, 0.79)
+        self.planets[0].set_material(1.0, 1.0, 1.0)
         self.planets[0].set_texture(self.load_texture("2k_mercury.jpg"))
         # Venus
         self.planets[1].set_name("Venus")
         self.planets[1].set_size(EARTH_SIZE - 0.1)
         self.planets[1].set_year(225 * scalar)
         self.planets[1].set_distance_from_sun(0.7)
-        self.planets[1].set_material(0.65, 0.49, 0.11)
+        self.planets[1].set_material(1.0, 1.0, 1.0)
         self.planets[1].set_texture(self.load_texture("2k_venus_surface.jpg"))
         # # Earth
         self.planets[2].set_name("Earth")
         self.planets[2].set_size(EARTH_SIZE)
         self.planets[2].set_year(365 * scalar)
         self.planets[2].set_distance_from_sun(1)
-        self.planets[2].set_material(0.49, 0.64, 0.49)
+        self.planets[2].set_material(1.0, 1.0, 1.0)
         self.planets[2].set_texture(self.load_texture("2k_earth_daymap.jpg"))
         # # Mars
         self.planets[3].set_name("Mars")
         self.planets[3].set_size(EARTH_SIZE / 2)
         self.planets[3].set_year(687 * scalar)
         self.planets[3].set_distance_from_sun(1.5)
-        self.planets[3].set_material(0.76, 0.27, 0.05)
+        self.planets[3].set_material(1.0, 1.0, 1.0)
         self.planets[3].set_texture(self.load_texture("2k_mars.jpg"))
         # # Jupiter
         self.planets[4].set_name("Jupiter")
         self.planets[4].set_size(EARTH_SIZE * 11)
         self.planets[4].set_year(4329 * scalar)
         self.planets[4].set_distance_from_sun(5.2)
-        self.planets[4].set_material(0.89, 0.86, 0.80)
+        self.planets[4].set_material(1.0, 1.0, 1.0)
         self.planets[4].set_texture(self.load_texture("2k_jupiter.jpg"))
         # # Saturn
         self.planets[5].set_name("Saturn")
         self.planets[5].set_size(EARTH_SIZE * 9)
         self.planets[5].set_year(10738 * scalar)
         self.planets[5].set_distance_from_sun(9.5)
-        self.planets[5].set_material(0.89, 0.88, 0.75)
+        self.planets[5].set_material(1.0, 1.0, 1.0)
         self.planets[5].set_texture(self.load_texture("2k_saturn.jpg"))
         # # Uranus
         self.planets[6].set_name("Uranus")
         self.planets[6].set_size(EARTH_SIZE * 4)
         self.planets[6].set_year(30569 * scalar)
         self.planets[6].set_distance_from_sun(19.8)
-        self.planets[6].set_material(0.73, 0.88, 0.89)
+        self.planets[6].set_material(1.0, 1.0, 1.0)
         self.planets[6].set_texture(self.load_texture("2k_uranus.jpg"))
         # # Naptune
         self.planets[7].set_name("Neptune")
         self.planets[7].set_size(EARTH_SIZE * 4 - 0.01)
         self.planets[7].set_year(59769 * scalar)
         self.planets[7].set_distance_from_sun(30.1)
-        self.planets[7].set_material(0.29, 0.44, 0.87)
+        self.planets[7].set_material(1.0, 1.0, 1.0)
         self.planets[7].set_texture(self.load_texture("2k_neptune.jpg"))
 
         self.light = Light(
@@ -158,6 +158,10 @@ class GraphicsProgram3D:
         self.white_tex = self.load_texture("white.png")
         self.black_tex = self.load_texture("black.png")
         self.sun_tex = self.load_texture("2k_sun.jpg")
+
+        # Rotation around a planet or ship ones locked to it
+        self.rotation = 0.0
+        self.angle = 0.0
 
     @staticmethod
     def load_texture(filename: str):
@@ -218,6 +222,8 @@ class GraphicsProgram3D:
         delta_time = self.clock.tick() / 1000.0
         curr_time = pygame.time.get_ticks() / 1000
 
+        self.angle += pi / 2 * delta_time * self.rotation
+
         # Individual planet/space ship view
         if any(self.views):
             # Space ship view
@@ -233,9 +239,9 @@ class GraphicsProgram3D:
                 planet_pos = self.planets[planet].get_global_coords()
                 self.view_matrix.look(
                     Point(
-                        planet_pos.x + (self.planets[planet].size + 2) * 2,
-                        planet_pos.y,
-                        planet_pos.z,
+                        planet_pos.x + self.planets[planet].size * 2 * cos(self.angle),
+                        planet_pos.y, #+ self.planets[planet].size * 2 * -sin(self.angle),
+                        planet_pos.z + self.planets[planet].size * 2 * sin(self.angle)
                     ),
                     planet_pos,
                     Vector(0.0, 1.0, 0.0),
@@ -247,10 +253,6 @@ class GraphicsProgram3D:
         # TODO: USE DELTA TIME FOR UPDATING PLANET POSITIONS
         for planet in self.planets:
             planet.update(curr_time)
-
-        self.light_position_factor += delta_time * pi / 10
-        self.light_position.x = -cos(self.light_position_factor) * 5.0
-        self.light_position.y = 3.0 + sin(self.light_position_factor) * 5.0
 
         self.my_cube_position_factor += delta_time * pi
         self.my_cube_position.x = cos(self.my_cube_position_factor)
@@ -369,6 +371,10 @@ class GraphicsProgram3D:
                         self.A_key_down = True
                     if event.key == K_d:
                         self.D_key_down = True
+                    if event.key == K_q:
+                        self.rotation += 1.0
+                    if event.key == K_e:
+                        self.rotation -= 1.0
 
                     if event.key == K_1:
                         self.change_view(0)
@@ -398,6 +404,10 @@ class GraphicsProgram3D:
                         self.A_key_down = False
                     if event.key == K_d:
                         self.D_key_down = False
+                    if event.key == K_q:
+                        self.rotation -= 1.0
+                    if event.key == K_e:
+                        self.rotation += 1.0
 
             self.look_x, self.look_y = pygame.mouse.get_rel()
             self.look_y *= -0.3

@@ -317,7 +317,7 @@ class GraphicsProgram3D:
             planet.display(self.model_matrix, self.shader)
         self.model_matrix.pop_matrix()
 
-        # Skybox/stars TODO: Add texture
+        # Skybox/stars
         glActiveTexture(GL_TEXTURE0)
         glBindTexture(GL_TEXTURE_2D, self.skybox_tex)
         self.shader.set_base_texture(0)
@@ -396,10 +396,9 @@ class GraphicsProgram3D:
                     if event.key == K_d:
                         self.D_key_down = False
 
-                elif event.type == pygame.MOUSEMOTION:
-                    self.look_x, self.look_y = pygame.mouse.get_rel()
-                    self.look_y *= -1
-                    self.look_x *= -1
+            self.look_x, self.look_y = pygame.mouse.get_rel()
+            self.look_y *= -1
+            self.look_x *= -1
 
             if len(events) == 0:
                 self.look_x = self.look_y = 0

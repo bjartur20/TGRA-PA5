@@ -19,6 +19,7 @@ class Planet(Sphere):
         self.material = Material()
         self.base_texture_id = 1
         self.specular_id = None
+        self.dark_id = None
 
     def update(self, t: int):
         self.position = t / self.year_len
@@ -45,6 +46,9 @@ class Planet(Sphere):
     def set_spec_texture(self, texture_id: int):
         self.specular_id = texture_id
 
+    def set_dark_texture(self, texture_id: int):
+        self.dark_id = texture_id
+
     def get_global_coords(self):
         return Point(
             self.distance_from_sun * cos(self.position * 2 * pi),
@@ -65,6 +69,10 @@ class Planet(Sphere):
             shader.set_specular_texture(1)
             self.material.specular = Color(1.0, 1.0, 1.0)
             self.material.shininess = 100
+        if self.dark_id:
+            glActiveTexture(GL_TEXTURE2)
+            glBindTexture(GL_TEXTURE_2D, self.dark_id)
+            shader.set_dark_side_texture(2)
         model_matrix.push_matrix()
         model_matrix.add_rotation_y(self.position * 2 * pi)
         shader.set_material(self.material)
@@ -75,6 +83,10 @@ class Planet(Sphere):
         shader.set_model_matrix(model_matrix.matrix)
         self.draw()
         model_matrix.pop_matrix()
+        if self.dark_id:
+            glBindTexture(GL_TEXTURE_2D, 0)  # Reset dark side texture
+            shader.set_dark_side_texture(2)
         if self.specular_id:
+            glActiveTexture(GL_TEXTURE1)
             glBindTexture(GL_TEXTURE_2D, 0)  # Reset specular
             shader.set_specular_texture(1)

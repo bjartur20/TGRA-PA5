@@ -107,6 +107,7 @@ class GraphicsProgram3D:
         self.planets[2].set_material(1.0, 1.0, 1.0)
         self.planets[2].set_texture(self.load_texture("8k_earth_daymap.jpg"))
         self.planets[2].set_spec_texture(self.load_texture("8k_earth_specular_map.png"))
+        self.planets[2].set_dark_texture(self.load_texture("8k_earth_nightmap_grey.jpg"))
         # # Mars
         self.planets[3].set_name("Mars")
         self.planets[3].set_size(EARTH_SIZE / 2)

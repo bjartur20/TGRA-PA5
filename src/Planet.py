@@ -59,7 +59,7 @@ class Planet(Sphere):
         model_matrix.add_rotation_y(self.position * 2 * pi)
         shader.set_material(self.material)
         model_matrix.add_translation(self.distance_from_sun, 0, 0)
-        model_matrix.add_rotation_x(self.day * 2 * pi)
+        # model_matrix.add_rotation_x(self.day * 2 * pi)
         model_matrix.add_scale(self.size, self.size, self.size)
         shader.set_model_matrix(model_matrix.matrix)
         self.draw()

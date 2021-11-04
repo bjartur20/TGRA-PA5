@@ -286,14 +286,16 @@ class GraphicsProgram3D:
         self.model_matrix.load_identity()
 
         # Space ship
-        # self.model_matrix.push_matrix()
-        # self.model_matrix.add_translation(
-        #     self.ship_pos.x, self.ship_pos.y, self.ship_pos.z
-        # )
-        # self.model_matrix.add_scale(0.01, 0.01, 0.01)
-        # self.shader.set_model_matrix(self.model_matrix.matrix)
-        # self.ship.draw(self.shader)
-        # self.model_matrix.pop_matrix()
+        glActiveTexture(GL_TEXTURE0)
+        glBindTexture(GL_TEXTURE_2D, self.white_tex)
+        self.model_matrix.push_matrix()
+        self.model_matrix.add_translation(
+            self.ship_pos.x, self.ship_pos.y, self.ship_pos.z
+        )
+        self.model_matrix.add_scale(0.01, 0.01, 0.01)
+        self.shader.set_model_matrix(self.model_matrix.matrix)
+        self.ship.draw(self.shader)
+        self.model_matrix.pop_matrix()
 
         # Sun
         glActiveTexture(GL_TEXTURE0)
@@ -347,7 +349,6 @@ class GraphicsProgram3D:
 
         exiting = False
         while not exiting:
-
             events = pygame.event.get()
             for event in events:
                 if event.type == pygame.QUIT:

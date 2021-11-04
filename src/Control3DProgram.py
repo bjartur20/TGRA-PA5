@@ -286,14 +286,16 @@ class GraphicsProgram3D:
         self.model_matrix.load_identity()
 
         # Space ship
-        # self.model_matrix.push_matrix()
-        # self.model_matrix.add_translation(
-        #     self.ship_pos.x, self.ship_pos.y, self.ship_pos.z
-        # )
-        # self.model_matrix.add_scale(0.01, 0.01, 0.01)
-        # self.shader.set_model_matrix(self.model_matrix.matrix)
-        # self.ship.draw(self.shader)
-        # self.model_matrix.pop_matrix()
+        glActiveTexture(GL_TEXTURE0)
+        glBindTexture(GL_TEXTURE_2D, self.white_tex)
+        self.model_matrix.push_matrix()
+        self.model_matrix.add_translation(
+            self.ship_pos.x, self.ship_pos.y, self.ship_pos.z
+        )
+        self.model_matrix.add_scale(0.01, 0.01, 0.01)
+        self.shader.set_model_matrix(self.model_matrix.matrix)
+        self.ship.draw(self.shader)
+        self.model_matrix.pop_matrix()
 
         # Sun
         glActiveTexture(GL_TEXTURE0)
@@ -396,10 +398,9 @@ class GraphicsProgram3D:
                     if event.key == K_d:
                         self.D_key_down = False
 
-                elif event.type == pygame.MOUSEMOTION:
-                    self.look_x, self.look_y = pygame.mouse.get_rel()
-                    self.look_y *= -1
-                    self.look_x *= -1
+                self.look_x, self.look_y = pygame.mouse.get_rel()
+                self.look_y *= -1
+                self.look_x *= -1
 
             if len(events) == 0:
                 self.look_x = self.look_y = 0

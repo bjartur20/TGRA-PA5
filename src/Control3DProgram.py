@@ -1,3 +1,5 @@
+from OpenGL.GL import *
+
 from math import *
 from random import uniform
 
@@ -7,9 +9,9 @@ from pygame.locals import *
 import sys
 import time
 
-from Shaders import *
-from Matrices import *
-
+from Shaders import Shader3D
+from Matrices import ModelMatrix, ViewMatrix, ProjectionMatrix
+from Base3DObjects import Point, Vector, Cube, Sphere, Color
 from Planet import Planet
 from Space import Space
 from ObjLoader import ObjLoader
@@ -227,17 +229,10 @@ class GraphicsProgram3D:
 
         glViewport(0, 0, 800, 600)
         self.projection_matrix.set_perspective(
-<<<<<<< HEAD
                     pi/2,    # FOV
                     800/600, # Aspect ratio
                     0.1,     # Near plane
                     1000     # Far plane
-=======
-                    pi/2,     # FOV
-                    800/600,  # Aspect ratio
-                    0.1,      # Near plane
-                    1000      # Far plane
->>>>>>> d7eded7c0d28be496ec6aba20972e6995f27064d
         )
         self.shader.set_projection_matrix(self.projection_matrix.get_matrix())
         self.shader.set_view_matrix(self.view_matrix.get_matrix())
@@ -252,7 +247,6 @@ class GraphicsProgram3D:
         self.model_matrix.load_identity()
 
         # Space ship
-<<<<<<< HEAD
         self.model_matrix.push_matrix()
         self.model_matrix.add_translation(self.ship_pos.x, self.ship_pos.y, self.ship_pos.z)
         self.model_matrix.add_scale(0.01, 0.01, 0.01)
@@ -260,13 +254,6 @@ class GraphicsProgram3D:
         self.ship.draw(self.shader)
         self.model_matrix.pop_matrix()
         
-=======
-        # self.model_matrix.push_matrix()
-        # self.shader.set_model_matrix(self.model_matrix.matrix)
-        # self.ship.draw(self.shader)
-        # self.model_matrix.pop_matrix()
-
->>>>>>> d7eded7c0d28be496ec6aba20972e6995f27064d
         # Sun
         glActiveTexture(GL_TEXTURE0)
         glBindTexture(GL_TEXTURE_2D, self.white_tex)

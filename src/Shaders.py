@@ -111,6 +111,7 @@ class Shader3D:
         glUniform1f(self.materialShininessLoc, shininess)
 
     def set_attribute_buffers(self, vertex_buffer_id):
+        glDisableVertexAttribArray(self.uvLoc)
         glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_id)
         glVertexAttribPointer(self.positionLoc, 3, GL_FLOAT, False, 6 * sizeof(GLfloat), OpenGL.GLU.ctypes.c_void_p(0))
         glVertexAttribPointer(self.normalLoc, 3, GL_FLOAT, False, 6 * sizeof(GLfloat),

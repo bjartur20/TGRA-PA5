@@ -1,7 +1,6 @@
-
 from OpenGL.GL import *
 import OpenGL.GLU
-from math import * # trigonometry
+from math import *  # trigonometry
 
 import sys
 
@@ -17,7 +16,10 @@ class Shader3D:
         glCompileShader(vert_shader)
         result = glGetShaderiv(vert_shader, GL_COMPILE_STATUS)
         if result != 1:  # shader didn't compile
-            print("Couldn't compile vertex shader\nShader compilation Log:\n" + str(glGetShaderInfoLog(vert_shader)))
+            print(
+                "Couldn't compile vertex shader\nShader compilation Log:\n"
+                + str(glGetShaderInfoLog(vert_shader))
+            )
 
         frag_shader = glCreateShader(GL_FRAGMENT_SHADER)
         shader_file = open(sys.path[0] + "/shaders/simple3D.frag")
@@ -26,7 +28,10 @@ class Shader3D:
         glCompileShader(frag_shader)
         result = glGetShaderiv(frag_shader, GL_COMPILE_STATUS)
         if result != 1:  # shader didn't compile
-            print("Couldn't compile fragment shader\nShader compilation Log:\n" + str(glGetShaderInfoLog(frag_shader)))
+            print(
+                "Couldn't compile fragment shader\nShader compilation Log:\n"
+                + str(glGetShaderInfoLog(frag_shader))
+            )
 
         self.renderingProgramID = glCreateProgram()
         glAttachShader(self.renderingProgramID, vert_shader)
@@ -34,7 +39,10 @@ class Shader3D:
         glLinkProgram(self.renderingProgramID)
         result = glGetProgramiv(self.renderingProgramID, GL_LINK_STATUS)
         if result != 1:  # program didn't link
-            print("Couldn't link shader program\nShader link Log:\n" + str(glGetProgramInfoLog(self.renderingProgramID))) 
+            print(
+                "Couldn't link shader program\nShader link Log:\n"
+                + str(glGetProgramInfoLog(self.renderingProgramID))
+            )
 
         self.positionLoc = glGetAttribLocation(self.renderingProgramID, "a_position")
         glEnableVertexAttribArray(self.positionLoc)
@@ -47,31 +55,67 @@ class Shader3D:
 
         self.eyePosLoc = glGetUniformLocation(self.renderingProgramID, "u_eye_position")
 
-        self.modelMatrixLoc			= glGetUniformLocation(self.renderingProgramID, "u_model_matrix")
-        self.viewMatrixLoc			= glGetUniformLocation(self.renderingProgramID, "u_view_matrix")
-        self.projectionMatrixLoc	= glGetUniformLocation(self.renderingProgramID, "u_projection_matrix")
+        self.modelMatrixLoc = glGetUniformLocation(
+            self.renderingProgramID, "u_model_matrix"
+        )
+        self.viewMatrixLoc = glGetUniformLocation(
+            self.renderingProgramID, "u_view_matrix"
+        )
+        self.projectionMatrixLoc = glGetUniformLocation(
+            self.renderingProgramID, "u_projection_matrix"
+        )
 
-        self.lightPosLoc            = glGetUniformLocation(self.renderingProgramID, "u_light_position")
-        self.lightAmbientLoc        = glGetUniformLocation(self.renderingProgramID, "u_light_ambient")
-        self.lightDiffuseLoc        = glGetUniformLocation(self.renderingProgramID, "u_light_diffuse")
-        self.lightSpecularLoc       = glGetUniformLocation(self.renderingProgramID, "u_light_specular")
-        self.lightAttenuationLoc    = glGetUniformLocation(self.renderingProgramID, "U_light_attenuation")
-        self.globalAmbientLoc       = glGetUniformLocation(self.renderingProgramID, "u_global_ambient")
+        self.lightPosLoc = glGetUniformLocation(
+            self.renderingProgramID, "u_light_position"
+        )
+        self.lightAmbientLoc = glGetUniformLocation(
+            self.renderingProgramID, "u_light_ambient"
+        )
+        self.lightDiffuseLoc = glGetUniformLocation(
+            self.renderingProgramID, "u_light_diffuse"
+        )
+        self.lightSpecularLoc = glGetUniformLocation(
+            self.renderingProgramID, "u_light_specular"
+        )
+        self.lightAttenuationLoc = glGetUniformLocation(
+            self.renderingProgramID, "U_light_attenuation"
+        )
+        self.globalAmbientLoc = glGetUniformLocation(
+            self.renderingProgramID, "u_global_ambient"
+        )
 
-        self.materialAmbientLoc     = glGetUniformLocation(self.renderingProgramID, "u_material_ambient")
-        self.materialDiffuseLoc     = glGetUniformLocation(self.renderingProgramID, "u_material_diffuse")
-        self.materialSpecularLoc    = glGetUniformLocation(self.renderingProgramID, "u_material_specular")
-        self.materialEmissionLoc    = glGetUniformLocation(self.renderingProgramID, "u_material_emission")
-        self.materialShininessLoc   = glGetUniformLocation(self.renderingProgramID, "u_material_shininess")
+        self.materialAmbientLoc = glGetUniformLocation(
+            self.renderingProgramID, "u_material_ambient"
+        )
+        self.materialDiffuseLoc = glGetUniformLocation(
+            self.renderingProgramID, "u_material_diffuse"
+        )
+        self.materialSpecularLoc = glGetUniformLocation(
+            self.renderingProgramID, "u_material_specular"
+        )
+        self.materialEmissionLoc = glGetUniformLocation(
+            self.renderingProgramID, "u_material_emission"
+        )
+        self.materialShininessLoc = glGetUniformLocation(
+            self.renderingProgramID, "u_material_shininess"
+        )
 
-        self.textureBaseLoc = glGetUniformLocation(self.renderingProgramID, "u_tex_base")
-        self.textureSpecLoc = glGetUniformLocation(self.renderingProgramID, "u_tex_specular")
-        self.textureDarkLoc = glGetUniformLocation(self.renderingProgramID, "u_tex_dark_side")
-        self.textureAtmosLoc = glGetUniformLocation(self.renderingProgramID, "u_tex_atmosphere")
+        self.textureBaseLoc = glGetUniformLocation(
+            self.renderingProgramID, "u_tex_base"
+        )
+        self.textureSpecLoc = glGetUniformLocation(
+            self.renderingProgramID, "u_tex_specular"
+        )
+        self.textureDarkLoc = glGetUniformLocation(
+            self.renderingProgramID, "u_tex_dark_side"
+        )
+        self.textureAtmosLoc = glGetUniformLocation(
+            self.renderingProgramID, "u_tex_atmosphere"
+        )
 
     def use(self):
         try:
-            glUseProgram(self.renderingProgramID)   
+            glUseProgram(self.renderingProgramID)
         except OpenGL.error.GLError:
             print(glGetProgramInfoLog(self.renderingProgramID))
             raise
@@ -127,6 +171,27 @@ class Shader3D:
 
     def set_attribute_buffers(self, vertex_buffer_id):
         glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_id)
-        glVertexAttribPointer(self.positionLoc, 3, GL_FLOAT, False, 6 * sizeof(GLfloat), OpenGL.GLU.ctypes.c_void_p(0))
-        glVertexAttribPointer(self.normalLoc, 3, GL_FLOAT, False, 6 * sizeof(GLfloat),
-                              OpenGL.GLU.ctypes.c_void_p(3 * sizeof(GLfloat)))
+        glVertexAttribPointer(
+            self.positionLoc,
+            3,
+            GL_FLOAT,
+            False,
+            6 * sizeof(GLfloat),
+            OpenGL.GLU.ctypes.c_void_p(0),
+        )
+        glVertexAttribPointer(
+            self.normalLoc,
+            3,
+            GL_FLOAT,
+            False,
+            6 * sizeof(GLfloat),
+            OpenGL.GLU.ctypes.c_void_p(3 * sizeof(GLfloat)),
+        )
+        glVertexAttribPointer(
+            self.uvLoc,
+            2,
+            GL_FLOAT,
+            False,
+            6 * sizeof(GLfloat),
+            OpenGL.GLU.ctypes.c_void_p(2 * sizeof(GLfloat)),
+        )

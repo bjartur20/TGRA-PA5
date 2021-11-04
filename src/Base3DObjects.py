@@ -1,4 +1,3 @@
-
 from OpenGL.GL import *
 
 import numpy
@@ -13,7 +12,7 @@ class Point:
         self.z = z
 
     def __repr__(self):
-        return f'({self.x}, {self.y}, {self.z})'
+        return f"({self.x}, {self.y}, {self.z})"
 
     def __add__(self, other):
         return Point(self.x + other.x, self.y + other.y, self.z + other.z)
@@ -33,7 +32,7 @@ class Vector:
         self.x = x
         self.y = y
         self.z = z
-    
+
     def __add__(self, other):
         return Vector(self.x + other.x, self.y + other.y, self.z + other.z)
 
@@ -42,10 +41,10 @@ class Vector:
 
     def __mul__(self, scalar):
         return Vector(self.x * scalar, self.y * scalar, self.z * scalar)
-    
+
     def __len__(self):
         return sqrt(self.x * self.x + self.y * self.y + self.z * self.z)
-    
+
     def normalize(self):
         length = self.__len__()
         self.x /= length
@@ -56,7 +55,11 @@ class Vector:
         return self.x * other.x + self.y * other.y + self.z * other.z
 
     def cross(self, other):
-        return Vector(self.y*other.z - self.z*other.y, self.z*other.x - self.x*other.z, self.x*other.y - self.y*other.x)
+        return Vector(
+            self.y * other.z - self.z * other.y,
+            self.z * other.x - self.x * other.z,
+            self.x * other.y - self.y * other.x,
+        )
 
 
 class Color:
@@ -71,7 +74,9 @@ class Color:
 
 
 class Material:
-    def __init__(self, diffuse=None, specular=None, shininess=None, ambient=None, emission=None):
+    def __init__(
+        self, diffuse=None, specular=None, shininess=None, ambient=None, emission=None
+    ):
         self.diffuse = Color(0.0, 0.0, 0.0) if diffuse is None else diffuse
         self.specular = Color(0.0, 0.0, 0.0) if specular is None else specular
         self.shininess = 1 if shininess is None else shininess
@@ -80,87 +85,216 @@ class Material:
 
 
 class Light:
-    def __init__(self, position=None, ambient=None, diffuse=None, specular=None):
+    def __init__(
+        self, position=None, ambient=None, diffuse=None, specular=None, attenuation=None
+    ):
         self.position = Point(0.0, 0.0, 0.0) if position is None else position
         self.ambient = Color(0.0, 0.0, 0.0) if ambient is None else ambient
         self.diffuse = Color(0.0, 0.0, 0.0) if diffuse is None else diffuse
         self.specular = Color(0.0, 0.0, 0.0) if specular is None else specular
+        self.attenuation = Vector(1.0, 0.0, 0.0) if attenuation is None else attenuation
 
 
 class Cube:
     def __init__(self):
-        self.position_array = [-0.5, -0.5, -0.5,
-                            -0.5, 0.5, -0.5,
-                            0.5, 0.5, -0.5,
-                            0.5, -0.5, -0.5,
-                            -0.5, -0.5, 0.5,
-                            -0.5, 0.5, 0.5,
-                            0.5, 0.5, 0.5,
-                            0.5, -0.5, 0.5,
-                            -0.5, -0.5, -0.5,
-                            0.5, -0.5, -0.5,
-                            0.5, -0.5, 0.5,
-                            -0.5, -0.5, 0.5,
-                            -0.5, 0.5, -0.5,
-                            0.5, 0.5, -0.5,
-                            0.5, 0.5, 0.5,
-                            -0.5, 0.5, 0.5,
-                            -0.5, -0.5, -0.5,
-                            -0.5, -0.5, 0.5,
-                            -0.5, 0.5, 0.5,
-                            -0.5, 0.5, -0.5,
-                            0.5, -0.5, -0.5,
-                            0.5, -0.5, 0.5,
-                            0.5, 0.5, 0.5,
-                            0.5, 0.5, -0.5]
-        self.normal_array = [0.0, 0.0, -1.0,
-                            0.0, 0.0, -1.0,
-                            0.0, 0.0, -1.0,
-                            0.0, 0.0, -1.0,
-                            0.0, 0.0, 1.0,
-                            0.0, 0.0, 1.0,
-                            0.0, 0.0, 1.0,
-                            0.0, 0.0, 1.0,
-                            0.0, -1.0, 0.0,
-                            0.0, -1.0, 0.0,
-                            0.0, -1.0, 0.0,
-                            0.0, -1.0, 0.0,
-                            0.0, 1.0, 0.0,
-                            0.0, 1.0, 0.0,
-                            0.0, 1.0, 0.0,
-                            0.0, 1.0, 0.0,
-                            -1.0, 0.0, 0.0,
-                            -1.0, 0.0, 0.0,
-                            -1.0, 0.0, 0.0,
-                            -1.0, 0.0, 0.0,
-                            1.0, 0.0, 0.0,
-                            1.0, 0.0, 0.0,
-                            1.0, 0.0, 0.0,
-                            1.0, 0.0, 0.0]
-        self.uv_array = [0.0, 0.0,
-                         0.0, 1.0,
-                         1.0, 1.0,
-                         1.0, 0.0,
-                         0.0, 0.0,
-                         0.0, 1.0,
-                         1.0, 1.0,
-                         1.0, 0.0,
-                         0.0, 0.0,
-                         0.0, 1.0,
-                         1.0, 1.0,
-                         1.0, 0.0,
-                         0.0, 0.0,
-                         0.0, 1.0,
-                         1.0, 1.0,
-                         1.0, 0.0,
-                         0.0, 0.0,
-                         0.0, 1.0,
-                         1.0, 1.0,
-                         1.0, 0.0,
-                         0.0, 0.0,
-                         0.0, 1.0,
-                         1.0, 1.0,
-                         1.0, 0.0]
+        self.position_array = [
+            -0.5,
+            -0.5,
+            -0.5,
+            -0.5,
+            0.5,
+            -0.5,
+            0.5,
+            0.5,
+            -0.5,
+            0.5,
+            -0.5,
+            -0.5,
+            -0.5,
+            -0.5,
+            0.5,
+            -0.5,
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            -0.5,
+            0.5,
+            -0.5,
+            -0.5,
+            -0.5,
+            0.5,
+            -0.5,
+            -0.5,
+            0.5,
+            -0.5,
+            0.5,
+            -0.5,
+            -0.5,
+            0.5,
+            -0.5,
+            0.5,
+            -0.5,
+            0.5,
+            0.5,
+            -0.5,
+            0.5,
+            0.5,
+            0.5,
+            -0.5,
+            0.5,
+            0.5,
+            -0.5,
+            -0.5,
+            -0.5,
+            -0.5,
+            -0.5,
+            0.5,
+            -0.5,
+            0.5,
+            0.5,
+            -0.5,
+            0.5,
+            -0.5,
+            0.5,
+            -0.5,
+            -0.5,
+            0.5,
+            -0.5,
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            -0.5,
+        ]
+        self.normal_array = [
+            0.0,
+            0.0,
+            -1.0,
+            0.0,
+            0.0,
+            -1.0,
+            0.0,
+            0.0,
+            -1.0,
+            0.0,
+            0.0,
+            -1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            -1.0,
+            0.0,
+            0.0,
+            -1.0,
+            0.0,
+            0.0,
+            -1.0,
+            0.0,
+            0.0,
+            -1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            -1.0,
+            0.0,
+            0.0,
+            -1.0,
+            0.0,
+            0.0,
+            -1.0,
+            0.0,
+            0.0,
+            -1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+        ]
+        self.uv_array = [
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.0,
+        ]
 
     def set_vertices(self, shader):
         shader.set_position_attribute(self.position_array)
@@ -190,7 +324,14 @@ class MeshModel:
         if mesh_id not in self.vertex_arrays:
             self.vertex_arrays[mesh_id] = []
             self.vertex_counts[mesh_id] = 0
-        self.vertex_arrays[mesh_id] += [position.x, position.y, position.z, normal.x, normal.y, normal.z]
+        self.vertex_arrays[mesh_id] += [
+            position.x,
+            position.y,
+            position.z,
+            normal.x,
+            normal.y,
+            normal.z,
+        ]
         self.vertex_counts[mesh_id] += 1
 
     def set_mesh_material(self, mesh_id, mat_id):
@@ -203,16 +344,17 @@ class MeshModel:
         for mesh_id in self.mesh_materials.keys():
             self.vertex_buffer_ids[mesh_id] = glGenBuffers(1)
             glBindBuffer(GL_ARRAY_BUFFER, self.vertex_buffer_ids[mesh_id])
-            glBufferData(GL_ARRAY_BUFFER, numpy.array(self.vertex_arrays[mesh_id], dtype='float32'), GL_STATIC_DRAW)
+            glBufferData(
+                GL_ARRAY_BUFFER,
+                numpy.array(self.vertex_arrays[mesh_id], dtype="float32"),
+                GL_STATIC_DRAW,
+            )
             glBindBuffer(GL_ARRAY_BUFFER, 0)
 
     def draw(self, shader):
         for mesh_id, mesh_material in self.mesh_materials.items():
             material = self.materials[mesh_material]
             shader.set_material(material)
-            # shader.set_material_diffuse(material.diffuse)
-            # shader.set_material_specular(material.specular)
-            # shader.set_material_shininess(material.shininess)
             shader.set_attribute_buffers(self.vertex_buffer_ids[mesh_id])
             glDrawArrays(GL_TRIANGLES, 0, self.vertex_counts[mesh_id])
             glBindBuffer(GL_ARRAY_BUFFER, 0)
@@ -236,9 +378,13 @@ class Sphere:
                 self.vertex_array.append(cos(stack_angle))
                 self.vertex_array.append(sin(stack_angle) * sin(slice_angle))
 
-                self.vertex_array.append(sin(stack_angle + stack_interval) * cos(slice_angle))
+                self.vertex_array.append(
+                    sin(stack_angle + stack_interval) * cos(slice_angle)
+                )
                 self.vertex_array.append(cos(stack_angle + stack_interval))
-                self.vertex_array.append(sin(stack_angle + stack_interval) * sin(slice_angle))
+                self.vertex_array.append(
+                    sin(stack_angle + stack_interval) * sin(slice_angle)
+                )
 
                 self.vertex_count += 2
 

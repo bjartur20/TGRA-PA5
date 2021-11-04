@@ -355,7 +355,6 @@ class GraphicsProgram3D:
 
         exiting = False
         while not exiting:
-
             events = pygame.event.get()
             for event in events:
                 if event.type == pygame.QUIT:

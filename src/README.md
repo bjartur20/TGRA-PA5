@@ -13,5 +13,5 @@ textures are in 2k except for the earth which is in 8k, has a specular map, clou
 side texture as well.
 
 # Authors
-Bjartur Þorhalsson - bjartur19@ru.is
+Bjartur Þorhallsson - bjartur19@ru.is
 Gudjon Ingi Valdimarsson - gudjonv18@ru.is 

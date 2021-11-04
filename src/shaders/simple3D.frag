@@ -30,9 +30,15 @@ void main(void)
 	vec4 ambient 	= u_light_ambient * u_material_ambient;
 	vec4 diffuse 	= u_light_diffuse * u_material_diffuse * lambert;
 	vec4 specular 	= u_light_specular * u_material_specular * pow(phong, u_material_shininess);
-//	ambient *= attenuation;
-//	diffuse *= attenuation;
-//	specular *= attenuation;
+	if (ambient.x != 0.0 || ambient.y != 0.0 || ambient.z != 0.0 ) {
+		ambient *= attenuation;
+	}
+//	if (diffuse.x != 0.0 || diffuse.y != 0.0 || diffuse.z != 0.0 ) {
+//		diffuse *= attenuation;
+//	}
+	if (specular.x != 0.0 || specular.y != 0.0 || specular.z != 0.0 ) {
+		specular *= attenuation;
+	}
 
 	vec4 color = ambient + diffuse + specular
 				+ u_global_ambient * u_material_ambient

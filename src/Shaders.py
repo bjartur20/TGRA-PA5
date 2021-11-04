@@ -91,6 +91,9 @@ class Shader3D:
         c, l, q = light.attenuation.x, light.attenuation.y, light.attenuation.z
         glUniform4f(self.lightAttenuationLoc, c, l, q, 0.0)
 
+    def set_global_ambient(self, r, g, b):
+        glUniform4f(self.globalAmbientLoc, r, g, b, 1.0)
+
     def set_position_attribute(self, vertex_array):
         glVertexAttribPointer(self.positionLoc, 3, GL_FLOAT, False, 0, vertex_array)
 

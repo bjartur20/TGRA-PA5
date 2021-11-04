@@ -123,7 +123,7 @@ class GraphicsProgram3D:
         self.planets[7].set_color(0.29, 0.44, 0.87)
 
         self.light = Light(self.light_position, Color(0.8, 0.8, 0.8), Color(0.8, 0.8, 0.8),
-                           Color(0.8, 0.8, 0.8))#, Vector(1.0, 0.022, 0.0019))
+                           Color(0.8, 0.8, 0.8), Vector(1.0, 0.7, 1.8))
         self.sun_material = Material(emission=Color(0.8, 0.7, 0.0))
         self.skybox_material = Material(emission=Color(0.2, 0.2, 0.2))
 
@@ -210,6 +210,7 @@ class GraphicsProgram3D:
 
         # Setup light
         self.shader.set_light(self.light)
+        self.shader.set_global_ambient(0.0, 0.0, 0.0)
 
         self.model_matrix.load_identity()
 

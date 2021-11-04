@@ -77,12 +77,11 @@ class Material:
 
 
 class Light:
-    def __init__(self, position=None, ambient=None, diffuse=None, specular=None, attenuation=None):
+    def __init__(self, position=None, ambient=None, diffuse=None, specular=None):
         self.position = Point(0.0, 0.0, 0.0) if position is None else position
         self.ambient = Color(0.0, 0.0, 0.0) if ambient is None else ambient
         self.diffuse = Color(0.0, 0.0, 0.0) if diffuse is None else diffuse
         self.specular = Color(0.0, 0.0, 0.0) if specular is None else specular
-        self.attenuation = Vector(1.0, 0.0, 0.0) if attenuation is None else attenuation
 
 
 class Cube:

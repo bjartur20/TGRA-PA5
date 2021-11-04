@@ -122,13 +122,13 @@ class GraphicsProgram3D:
         self.planets[7].set_distance_from_sun(30.1)
         self.planets[7].set_color(0.29, 0.44, 0.87)
 
-        self.light = Light(self.light_position, Color(0.8, 0.8, 0.8), Color(0.8, 0.8, 0.8),
-                           Color(0.8, 0.8, 0.8), Vector(1.0, 0.7, 1.8))
+        self.light = Light(self.light_position, Color(0.8, 0.8, 0.8), Color(0.8, 0.8, 0.8), Color(0.8, 0.8, 0.8))
         self.sun_material = Material(emission=Color(0.8, 0.7, 0.0))
         self.skybox_material = Material(emission=Color(0.2, 0.2, 0.2))
 
         self.skybox_tex = self.load_texture(sys.path[0] + "/textures/stars.jpg")
         self.white_tex = self.load_texture(sys.path[0] + "/textures/white.png")
+        self.black_tex = self.load_texture(sys.path[0] + "/textures/black.png")
 
     @staticmethod
     def load_texture(path: str):

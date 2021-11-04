@@ -227,7 +227,11 @@ class GraphicsProgram3D:
             # Space ship view
             if self.views[8]:
                 self.view_matrix.look(
-                    Point(self.ship_pos.x + 1, self.ship_pos.y, self.ship_pos.z),
+                    Point(
+                        self.ship_pos.x + 2 * cos(self.angle),
+                        self.ship_pos.y,
+                        self.ship_pos.z + 2 * sin(self.angle)
+                    ),
                     self.ship_pos,
                     Vector(0, 1, 0),
                 )
@@ -238,7 +242,7 @@ class GraphicsProgram3D:
                 self.view_matrix.look(
                     Point(
                         planet_pos.x + self.planets[planet].size * 2 * cos(self.angle),
-                        planet_pos.y, #+ self.planets[planet].size * 2 * -sin(self.angle),
+                        planet_pos.y,
                         planet_pos.z + self.planets[planet].size * 2 * sin(self.angle)
                     ),
                     planet_pos,

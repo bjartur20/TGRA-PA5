@@ -67,6 +67,7 @@ class Shader3D:
         self.textureBaseLoc = glGetUniformLocation(self.renderingProgramID, "u_tex_base")
         self.textureSpecLoc = glGetUniformLocation(self.renderingProgramID, "u_tex_specular")
         self.textureDarkLoc = glGetUniformLocation(self.renderingProgramID, "u_tex_dark_side")
+        self.textureAtmosLoc = glGetUniformLocation(self.renderingProgramID, "u_tex_atmosphere")
 
     def use(self):
         try:
@@ -110,6 +111,9 @@ class Shader3D:
 
     def set_dark_side_texture(self, number: int):
         glUniform1i(self.textureDarkLoc, number)
+
+    def set_atmosphere_texture(self, number: int):
+        glUniform1i(self.textureAtmosLoc, number)
 
     def set_eye_position(self, pos):
         glUniform4f(self.eyePosLoc, pos.x, pos.y, pos.z, 1.0)

@@ -98,7 +98,7 @@ class GraphicsProgram3D:
         self.planets[1].set_year(225 * scalar)
         self.planets[1].set_distance_from_sun(0.7)
         self.planets[1].set_material(1.0, 1.0, 1.0)
-        self.planets[1].set_texture(self.load_texture("2k_venus_surface.jpg"))
+        self.planets[1].set_texture(self.load_texture("2k_venus_atmosphere.jpg"))
         # # Earth
         self.planets[2].set_name("Earth")
         self.planets[2].set_size(EARTH_SIZE)
@@ -108,6 +108,7 @@ class GraphicsProgram3D:
         self.planets[2].set_texture(self.load_texture("8k_earth_daymap.jpg"))
         self.planets[2].set_spec_texture(self.load_texture("8k_earth_specular_map.png"))
         self.planets[2].set_dark_texture(self.load_texture("8k_earth_nightmap_grey.jpg"))
+        self.planets[2].set_atmosphere_texture(self.load_texture("8k_earth_clouds.jpg"))
         # # Mars
         self.planets[3].set_name("Mars")
         self.planets[3].set_size(EARTH_SIZE / 2)
@@ -253,7 +254,6 @@ class GraphicsProgram3D:
         else:
             self.spectator_movement(delta_time)
 
-        # TODO: USE DELTA TIME FOR UPDATING PLANET POSITIONS
         for planet in self.planets:
             planet.update(curr_time)
 
@@ -325,7 +325,7 @@ class GraphicsProgram3D:
             planet.display(self.model_matrix, self.shader)
         self.model_matrix.pop_matrix()
 
-        # Skybox/stars TODO: Add texture
+        # Skybox/stars
         glActiveTexture(GL_TEXTURE0)
         glBindTexture(GL_TEXTURE_2D, self.skybox_tex)
         self.shader.set_base_texture(0)

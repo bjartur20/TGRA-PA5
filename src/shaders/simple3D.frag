@@ -13,6 +13,7 @@ uniform vec4 u_global_ambient;
 uniform sampler2D u_tex_base;
 uniform sampler2D u_tex_specular;
 uniform sampler2D u_tex_dark_side;
+uniform sampler2D u_tex_atmosphere;
 
 varying vec4 v_normal;
 varying vec4 v_s;
@@ -21,7 +22,7 @@ varying vec2 v_uv;
 
 void main(void)
 {
-	vec4 specular_mat = u_material_specular * texture2D(u_tex_specular, v_uv);
+	vec4 specular_mat = u_material_specular * texture2D(u_tex_specular, v_uv) * texture2D(u_tex_atmosphere, v_uv);
 
 	vec4 normal   = normalize(v_normal);
 	float lambert = max(dot(normal, normalize(v_s)), 0.0);
@@ -36,5 +37,5 @@ void main(void)
 				+ u_global_ambient * u_material_ambient
 				+ u_material_emission;
 
-	gl_FragColor = color * texture2D(u_tex_base, v_uv);
+	gl_FragColor = color * (texture2D(u_tex_base, v_uv) + texture2D(u_tex_atmosphere, v_uv));
 }

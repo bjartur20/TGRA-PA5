@@ -1,3 +1,4 @@
+import random
 from math import pi, sin, cos
 
 from OpenGL.GL import *
@@ -20,9 +21,11 @@ class Planet(Sphere):
         self.base_texture_id = 1
         self.specular_id = None
         self.dark_id = None
+        self.atmosphere_id = None
+        self.random_start = random.randint(0, 10000)  # Makes all planets start at a different place
 
     def update(self, t: int):
-        self.position = t / self.year_len
+        self.position = (t + self.random_start) / self.year_len
         self.day = self.position * self.year_len / 10
 
     def set_distance_from_sun(self, dist: float):
@@ -49,6 +52,9 @@ class Planet(Sphere):
     def set_dark_texture(self, texture_id: int):
         self.dark_id = texture_id
 
+    def set_atmosphere_texture(self, texture_id: int):
+        self.atmosphere_id = texture_id
+
     def get_global_coords(self):
         return Point(
             self.distance_from_sun * cos(self.position * 2 * pi),
@@ -73,6 +79,10 @@ class Planet(Sphere):
             glActiveTexture(GL_TEXTURE2)
             glBindTexture(GL_TEXTURE_2D, self.dark_id)
             shader.set_dark_side_texture(2)
+        if self.atmosphere_id:
+            glActiveTexture(GL_TEXTURE3)
+            glBindTexture(GL_TEXTURE_2D, self.atmosphere_id)
+            shader.set_atmosphere_texture(3)
         model_matrix.push_matrix()
         model_matrix.add_rotation_y(self.position * 2 * pi)
         shader.set_material(self.material)
@@ -83,7 +93,12 @@ class Planet(Sphere):
         shader.set_model_matrix(model_matrix.matrix)
         self.draw()
         model_matrix.pop_matrix()
+        if self.atmosphere_id:
+            glActiveTexture(GL_TEXTURE3)
+            glBindTexture(GL_TEXTURE_2D, 0)
+            shader.set_atmosphere_texture(3)
         if self.dark_id:
+            glActiveTexture(GL_TEXTURE2)
             glBindTexture(GL_TEXTURE_2D, 0)  # Reset dark side texture
             shader.set_dark_side_texture(2)
         if self.specular_id:
